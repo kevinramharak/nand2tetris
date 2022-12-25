@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "tests": "node tests/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.17",
+    "uvu": "^0.5.6"
+  }
+}
