@@ -3,6 +3,7 @@
     "tests": "node tests/index.js"
   },
   "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
     "@types/node": "^18.11.17",
     "uvu": "^0.5.6"
   }

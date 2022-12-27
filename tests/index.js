@@ -1,18 +1,27 @@
 // @ts-check
 
-const { createSetupForAssemblyProject } = require("./helpers/createSetupForAssemblyProject");
-const { createSetupForHardwareProject } = require("./helpers/createSetupForHardwareProject");
+const { createSetupForProject } = require("./helpers/createSetupForProject");
 
 const setups = [
-    createSetupForHardwareProject('01'),
-    createSetupForHardwareProject('02'),
-    createSetupForHardwareProject('03'),
-    createSetupForAssemblyProject('04'),
-    createSetupForHardwareProject('05'),
-    createSetupForAssemblyProject('06'),
+    createSetupForProject('01', 'HardwareSimulator'),
+    createSetupForProject('02', 'HardwareSimulator'),
+    createSetupForProject('03', 'HardwareSimulator'),
+    createSetupForProject('04', 'CPUEmulator'),
+    createSetupForProject('05', 'HardwareSimulator'),
 ];
+
+const suiteFilter = process.argv.slice(2);
+
+/**
+ *
+ * @param {string} suiteName
+ * @returns {boolean}
+ */
+function doRun(suiteName) {
+    return suiteFilter.length === 0 ? true : suiteFilter.includes(suiteName);
+}
 
 Promise.all(setups.map(setup => setup()))
     .then(suites => {
-        suites.forEach(suite => suite.run());
+        suites.forEach(suite => doRun(suite['suiteName']) && suite.run());
     });
