@@ -24,6 +24,15 @@ function createTestForTestFilePath(testFilePath, simulator) {
         }
         expected.forEach((expectedLine, index) => {
             const actualLine = actual[index];
+            // only works for single wildcard entries
+            if (expectedLine.length === actualLine.length ) {
+                const indexOfWildCard = expectedLine.indexOf('*');
+                if (indexOfWildCard !== -1) {
+                    const lastIndexOfWildCard = expectedLine.lastIndexOf('*');
+                    const replacement = actualLine.substring(indexOfWildCard, lastIndexOfWildCard + 1);
+                    expectedLine = expectedLine.substring(0, indexOfWildCard) + replacement + expectedLine.substring(lastIndexOfWildCard + 1);
+                }
+            }
             assert.equal(actualLine, expectedLine, `in ${path.basename(testFilePath, '.tst')} at line ${index + 1}`);
         });
     };

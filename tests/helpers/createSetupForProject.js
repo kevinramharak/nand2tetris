@@ -3,7 +3,7 @@
 const { suite } = require('uvu');
 const path = require('path');
 const { getTestFilePathsForProject } = require("./getTestFilePathsForProject");
-const { createTestForTestFilePath } = require('./createTestForTestFIlePath');
+const { createTestForTestFilePath } = require('./createTestForTestFilePath');
 
 const interactiveTests = [
     'Memory.tst',
