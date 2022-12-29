@@ -4,6 +4,7 @@
         "./**/*.ts"
     ],
     "compilerOptions": {
-        "outDir": "build"
+        "outDir": "build",
+        "incremental": true,
     }
 }
