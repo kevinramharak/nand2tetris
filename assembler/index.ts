@@ -2,7 +2,10 @@
 import { readFile, writeFile } from 'fs/promises';
 import process from 'process';
 
-import { assemble } from './assemble';
+import { assemble } from './assembler';
+import { lex } from './lexer';
+import { link } from './linker';
+import { parse } from './parser';
 
 function translateBinaryToText(input: Uint16Array): string {
     return Array.from(input)
@@ -20,7 +23,10 @@ async function main(...args: string[]): Promise<number> {
             throw new Error('expected filepath to end with .asm: ' + filePath);
         }
         const text = await readFile(filePath, { encoding: 'utf8' });
-        const output = assemble(text);
+        const tokens = lex(text);
+        const program = parse(tokens);
+        link(program);
+        const output = assemble(program);
         const outputText = translateBinaryToText(output);
         const outputPath = filePath.replace(/\.asm$/, '.hack');
         await writeFile(outputPath, outputText, { encoding: 'utf8' });
