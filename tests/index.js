@@ -1,5 +1,6 @@
 // @ts-check
 
+const { createSetupForVm } = require("./helpers/createSetupForVm");
 const { createSetupForAssembler } = require("./helpers/createSetupForAssembler");
 const { createSetupForProject } = require("./helpers/createSetupForProject");
 
@@ -10,6 +11,7 @@ const setups = [
     createSetupForProject('04', 'CPUEmulator'),
     createSetupForProject('05', 'HardwareSimulator'),
     createSetupForAssembler('06'),
+    createSetupForVm('07'),
 ];
 
 const suiteFilter = process.argv.slice(2);

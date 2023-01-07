@@ -6,7 +6,7 @@ const path = require('path');
 /**
  *
  * @param {string} project
- * @param {'.tst' | '.asm'} extension
+ * @param {'.tst' | '.asm' | '.vm'} extension
  * @returns {Promise<string[]>}
  */
 async function getTestFilePathsForProject(project, extension = '.tst') {

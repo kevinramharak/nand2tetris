@@ -2,7 +2,9 @@
   "scripts": {
     "tests": "node tests/index.js",
     "compile:assembler": "tsc -p assembler/",
-    "assembler": "node ./assembler/build/index.js"
+    "assembler": "node ./assembler/build/index.js",
+    "compile:vm": "tsc -p vm/",
+    "vm": "node ./vm/build/index.js"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
