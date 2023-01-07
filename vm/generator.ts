@@ -261,8 +261,7 @@ export function generate(program: Program): string {
         }
     });
 
-    const optimizedLines = optimize(lines);
-    const formattedLines = format(optimizedLines);
+    const formattedLines = format(lines);
     return formattedLines.join('\n');
 }
 
@@ -272,13 +271,18 @@ function format(lines: string[]): string[] {
     });
 }
 
+/**
+ * This optimizes some duplicate / symetric commands
+ * This really should be part of the assembler
+ * Optimizing should happen on the program.instructions level
+ */
 function optimize(lines: string[]): string[] {
     const optimized: string[] = [];
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         // squash symetric SP inc/dec instructions
         if (
-            line === '@SP' &&
+            line         === '@SP' &&
             lines[i + 1] === 'M = M + 1' &&
             lines[i + 2] === '@SP' &&
             lines[i + 3] === 'M = M - 1'
@@ -286,13 +290,27 @@ function optimize(lines: string[]): string[] {
             optimized.push('@SP');
             i += 3;
         } else if (
-            line === '@SP' &&
+            line         === '@SP' &&
             lines[i + 1] === 'M = M - 1' &&
             lines[i + 2] === '@SP' &&
             lines[i + 3] === 'M = M + 1'
         ) {
             optimized.push('@SP');
             i += 3;
+        } else if (
+            line         === '@SP' &&
+            lines[i + 1] === 'A = M' &&
+            lines[i + 2] === 'M = D' &&
+            lines[i + 3] === '@SP' &&
+            lines[i + 4] === 'A = M' &&
+            lines[i + 5] === 'D = M'
+        ) {
+            optimized.push(
+                line,
+                lines[i + 1],
+                lines[i + 2],
+            );
+            i += 5;
         } else {
             optimized.push(line);
         }

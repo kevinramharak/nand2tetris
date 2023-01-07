@@ -4,6 +4,9 @@
     A = M
     M = D
     @SP
+    M = M + 1
+    @SP
+    M = M - 1
     A = M
     D = M
     @3
@@ -14,6 +17,9 @@
     A = M
     M = D
     @SP
+    M = M + 1
+    @SP
+    M = M - 1
     A = M
     D = M
     @4
@@ -69,6 +75,9 @@
     A = M
     M = D
     @SP
+    M = M + 1
+    @SP
+    M = M - 1
     A = M
     D = M
     @SP
@@ -86,6 +95,9 @@
     A = M
     M = D
     @SP
+    M = M + 1
+    @SP
+    M = M - 1
     A = M
     D = M
     @SP
@@ -103,6 +115,9 @@
     A = M
     M = D
     @SP
+    M = M + 1
+    @SP
+    M = M - 1
     A = M
     D = M
     @SP

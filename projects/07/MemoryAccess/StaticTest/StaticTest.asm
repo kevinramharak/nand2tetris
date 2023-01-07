@@ -18,6 +18,9 @@
     A = M
     M = D
     @SP
+    M = M + 1
+    @SP
+    M = M - 1
     A = M
     D = M
     @StaticTest.8
@@ -47,6 +50,9 @@
     A = M
     M = D
     @SP
+    M = M + 1
+    @SP
+    M = M - 1
     A = M
     D = M
     @SP
@@ -61,6 +67,9 @@
     A = M
     M = D
     @SP
+    M = M + 1
+    @SP
+    M = M - 1
     A = M
     D = M
     @SP
