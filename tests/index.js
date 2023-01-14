@@ -3,6 +3,7 @@
 const { createSetupForVm } = require("./helpers/createSetupForVm");
 const { createSetupForAssembler } = require("./helpers/createSetupForAssembler");
 const { createSetupForProject } = require("./helpers/createSetupForProject");
+const path = require('path');
 
 const setups = [
     createSetupForProject('01', 'HardwareSimulator'),
@@ -12,6 +13,7 @@ const setups = [
     createSetupForProject('05', 'HardwareSimulator'),
     createSetupForAssembler('06'),
     createSetupForVm('07'),
+    createSetupForVm('08', (filePath) => filePath.includes('ProgramFlow') || filePath.endsWith('SimpleFunction.vm') ? filePath : path.dirname(filePath)),
 ];
 
 const suiteFilter = process.argv.slice(2);

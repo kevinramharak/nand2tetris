@@ -10,20 +10,22 @@ const { spawnSync } = require('child_process');
 
 /**
  *
- * @param {'07'} project
+ * @param {'07' | '08'} project
+ * @param {(filePath: string) => string} [identityFn]
  * @returns {() => Promise<import('uvu').Test>}
  */
-function createSetupForVm(project) {
+function createSetupForVm(project, identityFn = (filePath) => filePath) {
     const $ = suite(`projects/${project}`);
     return async () => {
         const testFiles = await getTestFilePathsForProject(project, '.vm');
-        testFiles.forEach(testFilePath => {
+        new Set(testFiles.map(identityFn)).forEach(testFilePath => {
             const name = path.basename(testFilePath, '.vm');
             const testCase = async () => {
                 const result = spawnSync('node', ['./vm/build/index.js', testFilePath], { encoding: 'utf8' });
                 assert.equal(undefined, result.error, 'custom vm returned an error code');
                 assert.equal('', result.stderr || '', 'custom vm returned output to stderr');
-                const asmFilePath = testFilePath.replace(/\.vm$/, '.tst');
+                const asmFilePath = testFilePath.endsWith('.vm') ? testFilePath.replace(/\.vm$/, '.tst')
+                    : testFilePath + `/${path.basename(testFilePath)}.tst`;
                 const emulatorResult = runSimulatorForTestFile(asmFilePath, 'CPUEmulator');
                 assert.equal(undefined, emulatorResult.error, 'cpu emulator returned an error code');
                 const doAssertStdErr = [
@@ -33,8 +35,10 @@ function createSetupForVm(project) {
                 if (doAssertStdErr.every(condition => condition)) {
                     assert.equal('', emulatorResult.stderr, 'cpu emulator returned output to stderr');
                 }
-                const outputFilePath = testFilePath.replace(/\.vm$/, '.out');
-                const compareFilePath = testFilePath.replace(/\.vm$/, '.cmp');
+                const outputFilePath = testFilePath.endsWith('.vm') ? testFilePath.replace(/\.vm$/, '.out')
+                : testFilePath + `/${path.basename(testFilePath)}.out`;
+                const compareFilePath = testFilePath.endsWith('.vm') ? testFilePath.replace(/\.vm$/, '.cmp')
+                : testFilePath + `/${path.basename(testFilePath)}.cmp`;
                 const [expected, actual] = (await Promise.all([
                     readFile(compareFilePath, { encoding: 'utf8' }),
                     readFile(outputFilePath, { encoding: 'utf8' }),

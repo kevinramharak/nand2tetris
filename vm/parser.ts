@@ -1,8 +1,10 @@
 import { Access } from './Access';
+import { FunctionInstructionType } from './FunctionInstruction';
 import { InstructionType } from './InstructionType';
 import { Keyword } from './Keyword';
 import { Operation } from './Operation';
 import { Program } from './Program';
+import { FlowType } from './ProgramFlowInstruction';
 import { Segment } from './Segment';
 import { Token } from './Token';
 import { TokenType } from './TokenType';
@@ -28,7 +30,13 @@ const operations: Partial<Record<Keyword, Operation>> = {
     [Keyword.Not]: Operation.Not,
     [Keyword.Or]: Operation.Or,
     [Keyword.Sub]: Operation.Subtract,
-}
+};
+
+const flowTypes: Partial<Record<Keyword, FlowType>> = {
+    [Keyword.Label]: FlowType.Label,
+    [Keyword.Goto]: FlowType.Goto,
+    [Keyword.IfGoto]: FlowType.IfGoto,
+};
 
 function formatExpectedType(bitmask: number): string {
     return Object.entries(TokenType).filter(([, value]) => {
@@ -93,6 +101,8 @@ export function parser(tokens: Token<TokenType>[], fileName: string): Program {
     // assume pre/post-fix whitespace is not part of the header
     program.header = program.header.trim();
 
+    let currentFunction = '';
+
     parsing: while (!eof()) {
         const token = next();
 
@@ -155,15 +165,45 @@ export function parser(tokens: Token<TokenType>[], fileName: string): Program {
             case Keyword.Label:
             case Keyword.Goto:
             case Keyword.IfGoto: {
+                const label = expect(TokenType.Identifier);
+                const subtype = flowTypes[token.value as Keyword]!;
+                program.instructions.push({
+                    type: InstructionType.ProgramFlow,
+                    subtype,
+                    functionName: currentFunction,
+                    symbol: label.value,
+                })
                 continue parsing;
             }
             case Keyword.Function: {
+                const name = expect(TokenType.Identifier);
+                const locals = expect(TokenType.IntegerConstant);
+                program.instructions.push({
+                    type: InstructionType.Function,
+                    subtype: FunctionInstructionType.Declaration,
+                    functionName: name.value,
+                    locals: locals.value,
+                });
+                currentFunction = name.value;
                 continue parsing;
             }
             case Keyword.Call: {
+                const name = expect(TokenType.Identifier);
+                const locals = expect(TokenType.IntegerConstant);
+                program.instructions.push({
+                    type: InstructionType.Function,
+                    subtype: FunctionInstructionType.Call,
+                    callee: name.value,
+                    caller: currentFunction,
+                    arguments: locals.value,
+                });
                 continue parsing;
             }
             case Keyword.Return: {
+                program.instructions.push({
+                    type: InstructionType.Function,
+                    subtype: FunctionInstructionType.Return,
+                });
                 continue parsing;
             }
             default: {

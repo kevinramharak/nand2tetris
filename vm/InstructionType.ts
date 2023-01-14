@@ -4,5 +4,5 @@ export enum InstructionType {
     Arithmetic,
     MemoryAccess,
     ProgramFlow,
-    FunctionCall
+    Function
 }

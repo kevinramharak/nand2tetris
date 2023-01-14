@@ -3,6 +3,8 @@ import { InstructionType } from './InstructionType';
 import { Operation } from './Operation';
 import { Segment } from './Segment';
 import { Access } from './Access';
+import { FlowType } from './ProgramFlowInstruction';
+import { FunctionInstructionType } from './FunctionInstruction';
 
 type ComparisonOperation = Operation.Equals | Operation.GreaterThan | Operation.LesserThan;
 
@@ -94,6 +96,7 @@ export function generate(program: Program): string {
         pushFromD();
     }
 
+    let callCounter = 0;
     program.instructions.forEach(instruction => {
         switch (instruction.type) {
             case InstructionType.Arithmetic: {
@@ -152,6 +155,7 @@ export function generate(program: Program): string {
                                     `@${instruction.offset}`,
                                     `D = A`,
                                 );
+                                pushFromD();
                                 break;
                             }
                             case Segment.Argument:
@@ -172,6 +176,7 @@ export function generate(program: Program): string {
                                     `A = ${offset}M`,
                                     `D = M`,
                                 );
+                                pushFromD();
                                 break;
                             }
                             case Segment.Temp:
@@ -181,6 +186,7 @@ export function generate(program: Program): string {
                                     `@${address}`,
                                     `D = M`,
                                 );
+                                pushFromD();
                                 break;
                             }
                             case Segment.Static: {
@@ -188,13 +194,13 @@ export function generate(program: Program): string {
                                     `@${program.fileName}.${instruction.offset}`,
                                     `D = M`,
                                 );
+                                pushFromD();
                                 break;
                             }
                             default: {
                                 throw new Error(`invalid push instruction, invalid segment: ${Segment[instruction.segment]}`);
                             }
                         }
-                        pushFromD();
                         break;
                     }
                     case Access.Pop: {
@@ -253,16 +259,148 @@ export function generate(program: Program): string {
                 break;
             }
             case InstructionType.ProgramFlow: {
+                const label = `${instruction.functionName}$${instruction.symbol}`;
+                switch (instruction.subtype) {
+                    case FlowType.Goto: {
+                        lines.push(
+                            `@${label}`,
+                            `0; JMP`,
+                        );
+                        break;
+                    }
+                    case FlowType.IfGoto: {
+                        popIntoD();
+                        lines.push(
+                            `@${label}`,
+                            `D; JNE`,
+                        );
+                        break;
+                    }
+                    case FlowType.Label: {
+                        lines.push(
+                            `(${label})`,
+                        );
+                        break;
+                    }
+                }
                 break;
             }
-            case InstructionType.FunctionCall: {
+            case InstructionType.Function: {
+                // TODO: I think setting up / tearing down a stack frame is generic.
+                //       Can't we just dump the code and jump to it instead?
+                switch (instruction.subtype) {
+                    case FunctionInstructionType.Call: {
+                        const returnLabel = `${instruction.caller}$ret.${callCounter++}`;
+                        lines.push(
+                            `@${returnLabel}`,
+                            `D = A`,
+                        );
+                        pushFromD();
+                        lines.push(
+                            `@LCL`,
+                            `D = M`,
+                        );
+                        pushFromD();
+                        lines.push(
+                            `@ARG`,
+                            `D = M`,
+                        );
+                        pushFromD();
+                        lines.push(
+                            `@THIS`,
+                            `D = M`,
+                        );
+                        pushFromD();
+                        lines.push(
+                            `@THAT`,
+                            `D = M`,
+                        );
+                        pushFromD();
+                        lines.push(
+                            `@SP`,
+                            `D = M`,      // D = SP
+                            `@LCL`,
+                            `M = D`,      // LCL = SP
+                            `@${5 + instruction.arguments}`,
+                            `D = D - A`,  // D = SP - (5 + n)
+                            `@ARG`,
+                            `M = D`,      // ARG = SP - (5 + n)
+                        );
+                        lines.push(
+                            `@${instruction.callee}`,
+                            `0; JMP`,
+                            `(${returnLabel})`,
+                        );
+                        break;
+                    }
+                    case FunctionInstructionType.Declaration: {
+                        lines.push(
+                            `(${instruction.functionName})`,
+                        );
+                        // TODO: instead of rolling out the loop, jump to a generic routine that does this?
+                        //       or use a loop in assembly if locals > 2
+                        for (let i = 0; i < instruction.locals; i++) {
+                            lines.push(`D = 0`);
+                            pushFromD();
+                        }
+                        break;
+                    }
+                    case FunctionInstructionType.Return: {
+                        lines.push(
+                            `@LCL`,
+                            `D = M`,     // D = LCL
+                            `@R13`,
+                            `M = D`,     // @R13(FRAME) = LCL
+                            `@5`,
+                            `A = D - A`, // A = FRAME - 5
+                            `D = M`,     // D = *(FRAME - 5)
+                            `@R14`,      // @R14(RET) = *(FRAME - 5)
+                            `M = D`,
+                        );
+                        popIntoD();      // pop value from stack into D
+                        lines.push(
+                            `@ARG`,
+                            `A = M`,     // A = ARG
+                            `M = D`,     // *ARG = D
+                            `@ARG`,
+                            `D = M`,     // D = ARG
+                            `@SP`,
+                            `M = D + 1`, // @SP = ARG + 1
+                            `@R13`,
+                            `AM = M - 1`,// AM = @R13(FRAME) - 1
+                            `D = M`,     // D = *(FRAME - 1)
+                            `@THAT`,
+                            `M = D`,     // @THAT = *(FRAME - 1)
+                            `@R13`,
+                            `AM = M - 1`,
+                            `D = M`,
+                            `@THIS`,     // @THIS = *(FRAME - 2)
+                            `M = D`,
+                            `@R13`,
+                            `AM = M - 1`,
+                            `D = M`,
+                            `@ARG`,      // @ARG = *(FRAME - 3)
+                            `M = D`,
+                            `@R13`,
+                            `AM = M - 1`,
+                            `D = M`,
+                            `@LCL`,
+                            `M = D`,     // @LCL = *(FRAME - 4)
+                            `@R14`,
+                            `A = M`,
+                            `0; JMP`,
+                        );
+                        break;
+                    }
+                }
                 break;
             }
         }
     });
 
     const formattedLines = format(lines);
-    return formattedLines.join('\n');
+    const optimizedLines =  formattedLines; //optimize(optimize(formattedLines));
+    return optimizedLines.join('\n');
 }
 
 function format(lines: string[]): string[] {

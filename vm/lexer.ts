@@ -24,7 +24,7 @@ function isIdentifierStart(c: string) {
 }
 
 function isIdentifierPart(c: string) {
-    return isDecimal(c) || isIdentifierStart(c) || c === '.';
+    return  c === '.' || c === '-' || isDecimal(c) || isIdentifierStart(c);
 }
 
 const keywords: Record<string, Keyword> = {
