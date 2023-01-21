@@ -240,41 +240,26 @@ or
 if-goto IF_TRUE8
 goto IF_FALSE8
 label IF_TRUE8
-push this 2
-if-goto IF_TRUE9
-goto IF_FALSE9
-label IF_TRUE9
 push this 0
 push constant 1
 sub
 push argument 3
 eq
-if-goto IF_TRUE10
-goto IF_FALSE10
-label IF_TRUE10
-push argument 2
-push constant 0
-eq
-not
-return
-label IF_FALSE10
-goto IF_END9
-label IF_FALSE9
 push this 0
 push constant 1
 add
 push argument 3
 eq
-if-goto IF_TRUE11
-goto IF_FALSE11
-label IF_TRUE11
+or
+if-goto IF_TRUE9
+goto IF_FALSE9
+label IF_TRUE9
 push argument 2
 push constant 0
 eq
 not
 return
-label IF_FALSE11
-label IF_END9
+label IF_FALSE9
 label IF_FALSE8
 label IF_END0
 push constant 0

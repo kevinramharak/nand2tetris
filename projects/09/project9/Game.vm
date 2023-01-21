@@ -10,7 +10,7 @@ pop this 1
 push pointer 0
 call Game.initializePieces 1
 pop temp 0
-push constant 2
+push constant 1
 pop this 2
 push constant 1
 neg
@@ -71,6 +71,7 @@ add
 push constant 6
 push constant 0
 push constant 0
+not
 push constant 1
 call Piece.new 4
 pop temp 0
@@ -89,7 +90,6 @@ add
 push constant 7
 push constant 1
 push constant 0
-not
 push constant 1
 call Piece.new 4
 pop temp 0

@@ -31,7 +31,7 @@ class Game {
         let ui = UI.new();
         let board = Board.new(500);
         do initializePieces();
-        let turn = 2;
+        let turn = 1;
         let selectedRowIndex = -1;
         let selectedColumnIndex = -1;
         // initial hover should be on a white centered pawn
@@ -53,9 +53,9 @@ class Game {
             let i = i + 1;
         }
         let row = pieces[6];
-        let row[0] = Piece.new(6, 0, false, 1);
+        let row[0] = Piece.new(6, 0, true, 1);
         let row = pieces[7];
-        let row[1] = Piece.new(7, 1, true, 1);
+        let row[1] = Piece.new(7, 1, false, 1);
         // // setup black pieces
         // let i = 0;
         // let row = pieces[1];

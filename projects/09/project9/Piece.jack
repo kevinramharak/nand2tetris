@@ -108,14 +108,8 @@ class Piece {
             }
         } else {
             if (((columnIndex - 1) = targetColumnIndex) | ((columnIndex + 1) = targetColumnIndex)) {
-                if (isWhite) {
-                    if (rowIndex - 1 = targetRowIndex) {
-                        return ~(target = null);
-                    }
-                } else {
-                    if (rowIndex + 1 = targetRowIndex) {
-                        return ~(target = null);
-                    }
+                if (((rowIndex - 1) = targetRowIndex) | ((rowIndex + 1) = targetRowIndex)) {
+                    return ~(target = null);
                 }
             }
         }
