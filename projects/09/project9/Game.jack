@@ -1,0 +1,240 @@
+
+class Game {
+    /** the text interface for the game */
+    field UI ui;
+    /** the board interface for the game */
+    field Board board;
+    /** current turn in game, starts at 1 */
+    field int turn;
+    /** indexes of the currently selected square, -1 indicates nothing is selected */
+    field int selectedRowIndex;
+    field int selectedColumnIndex;
+    /** indexes of the currently hovered square, -1 indicates nothing is hovered */
+    field int hoveredRowIndex;
+    field int hoveredColumnIndex;
+    /**
+        flag to indicate we want a full redraw
+        other classes are free to use this flag as they see fit
+    */
+    field bool redraw;
+    /**
+        flag that we are still waiting for a key to be released
+        this allows us to implement our input scan without blocking execution
+    */
+    field bool waitingForKeyRelease;
+    /**
+        a 2 dimensional array that contains all the pieces
+     */
+    field Array pieces;
+
+    constructor Game new() {
+        let ui = UI.new();
+        let board = Board.new(500);
+        do initializePieces();
+        let turn = 2;
+        let selectedRowIndex = -1;
+        let selectedColumnIndex = -1;
+        // initial hover should be on a white centered pawn
+        let hoveredRowIndex = 6;
+        let hoveredColumnIndex = 0;
+        let redraw = true;
+        let waitingForKeyRelease = false;
+        return this;
+    }
+
+    method void initializePieces() {
+        var int i;
+        var Array row;
+        let pieces = Array.new(8);
+        let i = 0;
+        // TODO: would unrolling the loop increase performance?
+        while (~(i = 8)) {
+            let pieces[i] = Array.new(8);
+            let i = i + 1;
+        }
+        let row = pieces[6];
+        let row[0] = Piece.new(6, 0, false, 1);
+        let row = pieces[7];
+        let row[1] = Piece.new(7, 1, true, 1);
+        // // setup black pieces
+        // let i = 0;
+        // let row = pieces[1];
+        // while (~(i = 8)) {
+        //     let row[i] = Piece.new(1, i, false, 1);
+        //     let i = i + 1;
+        // }
+        // // setup white pieces
+        // let i = 0;
+        // let row = pieces[6];
+        // while (~(i = 8)) {
+        //     let row[i] = Piece.new(6, i, true, 1);
+        //     let i = i + 1;
+        // }
+        return;
+    }
+
+    method void dispose() {
+        var int i, j;
+        var Array row;
+        var Piece piece;
+        let i = 0;
+        let j = 0;
+        while (~(i = 8)) {
+            let row = pieces[i];
+            while (~(j = 8)) {
+                let piece = row[j];
+                if (~(piece = null)) {
+                    do piece.dispose();
+                }
+                let j = j + 1;
+            }
+            let j = 0;
+            do row.dispose();
+            let i = i + 1;
+        }
+        do pieces.dispose();
+        do board.dispose();
+        do ui.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void run() {
+        var bool exit;
+        let exit = false;
+        while (~exit) {
+            do draw();
+            do input();
+            do Timer.tick();
+            // this call is to see the elapsed time
+            // the goal is to have it about equal to actual speed of time
+            // if its really slow there are performance issues
+            do Debug.printInt(Timer.getElapsedTime());
+        }
+        return;
+    }
+
+    method void draw() {
+        do board.draw(redraw, hoveredRowIndex, hoveredColumnIndex, selectedRowIndex, selectedColumnIndex, pieces);
+        do ui.draw(redraw, turn);
+        let redraw = false;
+        return;
+    }
+
+    method void input() {
+        var Array row;
+        var Piece piece, target;
+        var char key;
+        let key = Keyboard.keyPressed();
+        if (waitingForKeyRelease) {
+            if (key = 0) {
+                let waitingForKeyRelease = false;
+            } else {
+                return;
+            }
+        }
+        if (~(key = 0)) {
+            let redraw = true;
+            let waitingForKeyRelease = true;
+            // left arrow
+            if (key = 130 & ~(hoveredColumnIndex = 0)) {
+                let hoveredColumnIndex = hoveredColumnIndex - 1;
+                return;
+            }
+            // up arrow
+            if (key = 131 & ~(hoveredRowIndex = 0)) {
+                let hoveredRowIndex = hoveredRowIndex - 1;
+                return;
+            }
+            // right arrow
+            if (key = 132 & ~(hoveredColumnIndex = 7)) {
+                let hoveredColumnIndex = hoveredColumnIndex + 1;
+                return;
+            }
+            // down arrow
+            if (key = 133 & ~(hoveredRowIndex = 7)) {
+                let hoveredRowIndex = hoveredRowIndex + 1;
+                return;
+            }
+            // space
+            if (key = 32) {
+                if (isNothingSelected()) {
+                    let row = pieces[hoveredRowIndex];
+                    let piece = row[hoveredColumnIndex];
+                    if (~(piece = null)) {
+                        if (canSelectPiece(piece)) {
+                            let selectedRowIndex = hoveredRowIndex;
+                            let selectedColumnIndex = hoveredColumnIndex;
+                        }
+                    }
+                } else {
+                    if (isHoveredSameAsSelected()) {
+                        let selectedRowIndex = -1;
+                        let selectedColumnIndex = -1;
+                    } else {
+                        let row = pieces[selectedRowIndex];
+                        let piece = row[selectedColumnIndex];
+                        if (~(piece = null)) {
+                            do movePiece(piece, hoveredRowIndex, hoveredColumnIndex);
+                        }
+                    }
+                }
+                return;
+            }
+        }
+        return;
+    }
+
+    method void movePiece(Piece piece, int rowIndex, int columnIndex) {
+        var Array row;
+        var Piece target;
+        let row = pieces[rowIndex];
+        let target = row[columnIndex];
+        if (~piece.canMoveTo(pieces, target, rowIndex, columnIndex)) {
+            return;
+        }
+        if (~(target = null)) {
+            do target.dispose();
+        }
+        do piece.setRowIndex(rowIndex);
+        do piece.setColumnIndex(columnIndex);
+        let row[columnIndex] = piece;
+        let row = pieces[selectedRowIndex];
+        let row[selectedColumnIndex] = null;
+        do promoteIfNeeded(piece, rowIndex);
+        let selectedRowIndex = -1;
+        let selectedColumnIndex = -1;
+        let turn = turn + 1;
+        return;
+    }
+
+    method void promoteIfNeeded(Piece piece, int rowIndex) {
+        // promote pawns if needed
+        // TODO: technically can choose the promotion type
+        if (piece.getType() = 1) {
+            if (piece.getIsWhite()) {
+                if (rowIndex = 0) {
+                    do piece.setType(5);
+                }
+            } else {
+                if (rowIndex = 7) {
+                    // promote
+                    do piece.setType(5);
+                }
+            }
+        }
+        return;
+    }
+
+    method bool isHoveredSameAsSelected() {
+        return (hoveredRowIndex = selectedRowIndex) & (hoveredColumnIndex = selectedColumnIndex);
+    }
+
+    method bool isNothingSelected() {
+        return selectedRowIndex = -1 & selectedColumnIndex = -1;
+    }
+
+    method bool canSelectPiece(Piece piece) {
+        return piece.getIsWhite() = Util.isOdd(turn);
+    }
+}

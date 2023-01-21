@@ -1,0 +1,34 @@
+function Main.main 0
+call Main.init 0
+pop temp 0
+call Main.run 0
+pop temp 0
+call Main.dispose 0
+pop temp 0
+push constant 0
+return
+function Main.run 1
+call Game.new 0
+pop local 0
+push local 0
+call Game.run 1
+pop temp 0
+push local 0
+call Game.dispose 1
+pop temp 0
+push constant 0
+return
+function Main.init 0
+call Debug.init 0
+pop temp 0
+call Timer.init 0
+pop temp 0
+push constant 0
+return
+function Main.dispose 0
+call Debug.dispose 0
+pop temp 0
+call Timer.dispose 0
+pop temp 0
+push constant 0
+return

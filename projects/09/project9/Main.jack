@@ -1,0 +1,44 @@
+
+/**
+ * ideas:
+ *  - chess
+ *  - keyboard visualizer
+ *  - animated character and background
+ */
+class Main {
+    function void main() {
+        do Main.init();
+        do Main.run();
+        do Main.dispose();
+        return;
+    }
+
+    function void run() {
+        var Game game;
+        let game = Game.new();
+        do game.run();
+        do game.dispose();
+        return;
+    }
+
+    /**
+        Used to initialize static variables on static classes
+        This saves a lot of time on allocations
+     */
+    function void init() {
+        do Debug.init();
+        do Timer.init();
+        return;
+    }
+
+    /**
+        Used to dispose static variables on static classes
+        This could be omitted as the program will stop after this
+        But lets keep it in as good practice
+     */
+    function void dispose() {
+        do Debug.dispose();
+        do Timer.dispose();
+        return;
+    }
+}

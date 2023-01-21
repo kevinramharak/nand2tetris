@@ -1,0 +1,14 @@
+function Util.isOdd 0
+push argument 0
+push constant 1
+and
+push constant 1
+eq
+return
+function Util.isEven 0
+push argument 0
+push constant 1
+and
+push constant 0
+eq
+return

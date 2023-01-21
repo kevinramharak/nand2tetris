@@ -1,0 +1,28 @@
+function Timer.init 0
+push constant 0
+pop static 0
+push constant 0
+return
+function Timer.dispose 0
+push constant 0
+return
+function Timer.wait 0
+push argument 0
+call Sys.wait 1
+pop temp 0
+push static 0
+push argument 0
+add
+pop static 0
+push constant 0
+return
+function Timer.tick 0
+push static 0
+push constant 1
+add
+pop static 0
+push constant 0
+return
+function Timer.getElapsedTime 0
+push static 0
+return

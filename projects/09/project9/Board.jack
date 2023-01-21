@@ -1,0 +1,225 @@
+
+/**
+    The (static) Board class knows how to draw the board
+    and can draw hover / selected states for specific squares
+ */
+class Board {
+    /** `timestamp` and `threshold` are used to animate the hover animation */
+    field int timestamp, threshold;
+    field bool invertHoverLine;
+
+    constructor Board new(int _threshold) {
+        let invertHoverLine = true;
+        let threshold = _threshold;
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void draw(bool redraw, int hoveredRowIndex, int hoveredColumnIndex, int selectedRowIndex, int selectedColumnIndex, Array pieces) {
+        do update();
+        if (redraw) {
+            do drawSquares();
+            do drawSelection(selectedRowIndex, selectedColumnIndex);
+            do drawPieces(pieces);
+        }
+        do drawHover(hoveredRowIndex, hoveredColumnIndex);
+        return;
+    }
+
+    method void update() {
+        var int now, diff;
+        let now = Timer.getElapsedTime();
+        let diff = now - timestamp;
+        if (diff > threshold) {
+            let invertHoverLine = ~invertHoverLine;
+            let timestamp = now;
+        }
+        return;
+    }
+
+    method void drawPieces(Array pieces) {
+        var int i, j;
+        var Array row;
+        var Piece piece;
+        let i = 0;
+        let j = 0;
+        // TODO: would unrolling the loop increase performance?
+        while (~(i = 8)) {
+            let row = pieces[i];
+            while (~(j = 8)) {
+                let piece = row[j];
+                if (~(piece = null)) {
+                    do piece.draw(this);
+                }
+                let j = j + 1;
+            }
+            let j = 0;
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void drawSquares() {
+        var int i, j;
+        let i = 0;
+        let j = 0;
+        // TODO: would unrolling the loop increase performance?
+        while (~(i = 8)) {
+            while (~(j = 8)) {
+                do drawSquare(i, j);
+                let j = j + 1;
+            }
+            let j = 0;
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method int calculateOffset(int rowIndex, int columnIndex) {
+        // (width_bytes_per_row * rows_per_square * rowIndex) + (width_bytes_per_square * columnIndex)
+        // (32 * 32 * rowIndex) + (2 * columnIndex)
+        return (1024 * rowIndex) + (2 * columnIndex);
+    }
+
+    method int calculateColor(int rowIndex, int columnIndex) {
+        var bool isEvenRow, isEvenColumn, result;
+        let isEvenRow = Util.isEven(rowIndex + 1);
+        let isEvenColumn = Util.isEven(columnIndex + 1);
+        if (isEvenRow) {
+            if (isEvenColumn) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else {
+            if (isEvenColumn) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    method void drawSquare(int rowIndex, int columnIndex) {
+        var int offset, color;
+        let offset = calculateOffset(rowIndex, columnIndex);
+        let color = calculateColor(rowIndex, columnIndex);
+        do fillSquare(offset, color);
+        return;
+    }
+
+    method void drawHover(int rowIndex, int columnIndex) {
+        var int offset, color;
+        if (rowIndex = -1 | columnIndex = -1) {
+            return;
+        }
+        let color = calculateColor(rowIndex, columnIndex);
+        let offset = calculateOffset(rowIndex, columnIndex);
+        if (invertHoverLine) {
+            let color = ~color;
+        }
+        // flattened for performance = 16384 + offset + 896
+        do drawVerticalLine(17280 + offset, color);
+        return;
+    }
+
+    method void drawSelection(int rowIndex, int columnIndex) {
+        var int offset, color;
+        if (rowIndex = -1 | columnIndex = -1) {
+            return;
+        }
+        let color = ~calculateColor(rowIndex, columnIndex);
+        let offset = calculateOffset(rowIndex, columnIndex);
+        // flattened for performance = 16384 + offset + 32
+        do drawVerticalLine(16448 + offset, color);
+        return;
+    }
+
+    method void drawVerticalLine(int address, int color) {
+        do Memory.poke(address, color);
+        do Memory.poke(address + 1, color);
+        let address = address + 32;
+        do Memory.poke(address, color);
+        do Memory.poke(address + 1, color);
+        return;
+    }
+
+    method void fillSquare(int initialOffset, int color) {
+        var int address; //, offset;
+        let address = 16384 + initialOffset;
+        // NOTE: these commented parts are to show the logic, the loop is unrolled to improve performance
+        // let offset = 0;
+        // while (~(offset > 960)) {
+        //     do Memory.poke(address + offset, color);
+        //     do Memory.poke(address + offset + 1, color);
+        //     let offset = offset + 32;
+        // }
+        do Memory.poke(address, color);
+        do Memory.poke(address + 1, color);
+        do Memory.poke(address + 32, color);
+        do Memory.poke(address + 33, color);
+        do Memory.poke(address + 64, color);
+        do Memory.poke(address + 65, color);
+        do Memory.poke(address + 96, color);
+        do Memory.poke(address + 97, color);
+        do Memory.poke(address + 128, color);
+        do Memory.poke(address + 129, color);
+        do Memory.poke(address + 160, color);
+        do Memory.poke(address + 161, color);
+        do Memory.poke(address + 192, color);
+        do Memory.poke(address + 193, color);
+        do Memory.poke(address + 224, color);
+        do Memory.poke(address + 225, color);
+        do Memory.poke(address + 256, color);
+        do Memory.poke(address + 257, color);
+        do Memory.poke(address + 288, color);
+        do Memory.poke(address + 289, color);
+        do Memory.poke(address + 320, color);
+        do Memory.poke(address + 321, color);
+        do Memory.poke(address + 352, color);
+        do Memory.poke(address + 353, color);
+        do Memory.poke(address + 384, color);
+        do Memory.poke(address + 385, color);
+        do Memory.poke(address + 416, color);
+        do Memory.poke(address + 417, color);
+        do Memory.poke(address + 448, color);
+        do Memory.poke(address + 449, color);
+        do Memory.poke(address + 480, color);
+        do Memory.poke(address + 481, color);
+        do Memory.poke(address + 512, color);
+        do Memory.poke(address + 513, color);
+        do Memory.poke(address + 544, color);
+        do Memory.poke(address + 545, color);
+        do Memory.poke(address + 576, color);
+        do Memory.poke(address + 577, color);
+        do Memory.poke(address + 608, color);
+        do Memory.poke(address + 609, color);
+        do Memory.poke(address + 640, color);
+        do Memory.poke(address + 641, color);
+        do Memory.poke(address + 672, color);
+        do Memory.poke(address + 673, color);
+        do Memory.poke(address + 704, color);
+        do Memory.poke(address + 705, color);
+        do Memory.poke(address + 736, color);
+        do Memory.poke(address + 737, color);
+        do Memory.poke(address + 768, color);
+        do Memory.poke(address + 769, color);
+        do Memory.poke(address + 800, color);
+        do Memory.poke(address + 801, color);
+        do Memory.poke(address + 832, color);
+        do Memory.poke(address + 833, color);
+        do Memory.poke(address + 864, color);
+        do Memory.poke(address + 865, color);
+        do Memory.poke(address + 896, color);
+        do Memory.poke(address + 897, color);
+        do Memory.poke(address + 928, color);
+        do Memory.poke(address + 929, color);
+        do Memory.poke(address + 960, color);
+        do Memory.poke(address + 961, color);
+        return;
+    }
+}

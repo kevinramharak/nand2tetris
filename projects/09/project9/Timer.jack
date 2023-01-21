@@ -1,0 +1,38 @@
+
+/**
+    A static class to guess the amount of time elapsed
+    Instead of `Sys.wait` use `Timer.wait`.
+ */
+class Timer {
+    /**
+        The value of `elapsed` is a mix of ticks (each main loop iteration represents 1 tick)
+        and calls to `Timer.wait(time)`
+        It can be used to roughly get an idea of the elapsed time.
+        Keeping the draw loop optimized is key to make sure the elapsed time is not slowed down to much
+     */
+    static int elapsed;
+
+    function void init() {
+        let elapsed = 0;
+        return;
+    }
+
+    function void dispose() {
+        return;
+    }
+
+    function void wait(int duration) {
+        do Sys.wait(duration);
+        let elapsed = elapsed + duration;
+        return;
+    }
+
+    function void tick() {
+        let elapsed = elapsed + 1;
+        return;
+    }
+
+    function int getElapsedTime() {
+        return elapsed;
+    }
+}

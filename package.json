@@ -4,7 +4,8 @@
     "compile:assembler": "tsc -p assembler/",
     "assembler": "node ./assembler/build/index.js",
     "compile:vm": "tsc -p vm/",
-    "vm": "node ./vm/build/index.js"
+    "vm": "node ./vm/build/index.js",
+    "project9": "cd projects/09/project9/ && rm -f ./*.vm && ..\\..\\..\\tools\\JackCompiler.bat"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",

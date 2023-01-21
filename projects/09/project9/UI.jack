@@ -1,0 +1,75 @@
+
+class UI {
+    field String s_turn;
+    field String s_white;
+    field String s_black;
+    field String s_yourMove;
+    field String s_arrowKeys1;
+    field String s_arrowKeys2;
+    field String s_spaceKey1;
+    field String s_spaceKey2;
+
+    constructor UI new() {
+        let s_turn = "turn: ";
+        let s_white = "White";
+        let s_black = "Black";
+        let s_yourMove = " your move!";
+        let s_arrowKeys1 = "use the arrow keys ";
+        let s_arrowKeys2 = "to move the cursor";
+        let s_spaceKey1 = "use the spacebar key ";
+        let s_spaceKey2 = "to select/move pieces";
+        do drawStaticText();
+        return this;
+    }
+
+    method void dispose() {
+        do s_turn.dispose();
+        do s_white.dispose();
+        do s_black.dispose();
+        do s_yourMove.dispose();
+        do s_arrowKeys1.dispose();
+        do s_arrowKeys2.dispose();
+        do s_spaceKey1.dispose();
+        do s_spaceKey2.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void draw(bool redraw, int turn) {
+        if (redraw) {
+            do drawTurn(turn);
+        }
+        return;
+    }
+
+    method void drawTurn(int turn) {
+        do Output.moveCursor(0, 38);
+        do Output.printInt(turn);
+        do Output.moveCursor(1, 33);
+        if (Util.isOdd(turn)) {
+            do Output.printString(s_white);
+        } else {
+            do Output.printString(s_black);
+        }
+        do Output.printString(s_yourMove);
+        return;
+    }
+
+    method void drawStaticText() {
+        // static parts of the interactive top text
+        do Output.moveCursor(0, 33);
+        do Output.printString(s_turn);
+        do Output.moveCursor(1, 38);
+        do Output.printString(s_yourMove);
+        do Output.moveCursor(18, 33);
+        // static instructions
+        do Output.printString(s_arrowKeys1);
+        do Output.moveCursor(19, 33);
+        do Output.printString(s_arrowKeys2);
+        do Output.moveCursor(21, 33);
+        do Output.printString(s_spaceKey1);
+        do Output.moveCursor(22, 33);
+        do Output.printString(s_spaceKey2);
+        return;
+    }
+}

@@ -1,0 +1,10 @@
+
+class Util {
+    function bool isOdd(int value) {
+        return (value & 1) = 1;
+    }
+
+    function bool isEven(int value) {
+        return (value & 1) = 0;
+    }
+}

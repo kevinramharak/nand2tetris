@@ -5,6 +5,7 @@ import process from 'process';
 import { assemble } from './assembler';
 import { lex } from './lexer';
 import { link } from './linker';
+import { optimize } from './optimizer';
 import { parse } from './parser';
 
 function translateBinaryToText(input: Uint16Array): string {
@@ -26,6 +27,9 @@ async function main(...args: string[]): Promise<number> {
         const tokens = lex(text);
         const program = parse(tokens);
         link(program);
+        if (args.includes('--optimize') || args.includes('-O')) {
+            optimize(program);
+        }
         const output = assemble(program);
         const outputText = translateBinaryToText(output);
         const outputPath = filePath.replace(/\.asm$/, '.hack');

@@ -1,0 +1,124 @@
+
+class Piece {
+    field int rowIndex, columnIndex;
+    field bool isWhite;
+    /**
+        the type of the piece is represented by an enum:
+        - 1 = pawn
+        - 2 = knight
+        - 3 = bishop
+        - 4 = rook
+        - 5 = queen
+        - 6 = king
+    */
+    field int type;
+
+    constructor Piece new(int _rowIndex, int _columnIndex, bool _isWhite, int _type) {
+        let rowIndex = _rowIndex;
+        let columnIndex = _columnIndex;
+        let isWhite = _isWhite;
+        let type = _type;
+        return this;
+    }
+
+    method void dispose() {
+        return;
+    }
+
+    method void setRowIndex(int _rowIndex) {
+        let rowIndex = _rowIndex;
+        return;
+    }
+
+    method void setColumnIndex(int _columnIndex) {
+        let columnIndex = _columnIndex;
+        return;
+    }
+
+    method bool getIsWhite() {
+        return isWhite;
+    }
+
+    method int getType() {
+        return type;
+    }
+
+    method void setType(int _type) {
+        let type = _type;
+        return;
+    }
+
+    method void draw(Board board) {
+        var int offset; //, backgroundColor;
+        let offset = board.calculateOffset(rowIndex, columnIndex);
+        // flattened for performance = 32 * 8
+        let offset = offset + 256;
+        // let backgroundColor = board.calculateColor(rowIndex, columnIndex);
+        if (isWhite) {
+            if (type = 1) {
+                do Pawn.drawWhite(offset);
+                return;
+            }
+        } else {
+            if (type = 1) {
+                do Pawn.drawBlack(offset);
+                return;
+            }
+        }
+        return;
+    }
+
+    method bool canMoveTo(Array pieces, Piece target, int targetRowIndex, int targetColumnIndex) {
+        if (type = 1) {
+            return canPawnMoveTo(pieces, target, targetRowIndex, targetColumnIndex);
+        }
+        return false;
+    }
+
+    method bool canPawnMoveTo(Array pieces, Piece target, int targetRowIndex, int targetColumnIndex) {
+        var Array row;
+        if (columnIndex = targetColumnIndex) {
+            // TODO: make this generic
+            if (isWhite) {
+                // starting position
+                if (rowIndex = 6 & targetRowIndex = 4) {
+                    // no blocking piece
+                    let row = pieces[5];
+                    if (~(row[columnIndex] = null)) {
+                        return false;
+                    }
+                    return target = null;
+                }
+                if ((rowIndex - 1) = targetRowIndex) {
+                    return target = null;
+                }
+            } else {
+                // starting position
+                if (rowIndex = 1 & targetRowIndex = 3) {
+                    // no blocking piece
+                    let row = pieces[2];
+                    if (~(row[columnIndex] = null)) {
+                        return false;
+                    }
+                    return target = null;
+                }
+                if ((rowIndex + 1) = targetRowIndex) {
+                    return target = null;
+                }
+            }
+        } else {
+            if (((columnIndex - 1) = targetColumnIndex) | ((columnIndex + 1) = targetColumnIndex)) {
+                if (isWhite) {
+                    if (rowIndex - 1 = targetRowIndex) {
+                        return ~(target = null);
+                    }
+                } else {
+                    if (rowIndex + 1 = targetRowIndex) {
+                        return ~(target = null);
+                    }
+                }
+            }
+        }
+        return false;
+    }
+}

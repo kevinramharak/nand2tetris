@@ -1,0 +1,32 @@
+
+class Debug {
+    static String debug, whitespace;
+
+    function void init() {
+        let debug = "DEBUG: ";
+        let whitespace = "     ";
+        return;
+    }
+
+    function void dispose() {
+        do debug.dispose();
+        do whitespace.dispose();
+        return;
+    }
+
+    function void printInt(int value) {
+        do Output.moveCursor(15, 33);
+        do Output.printString(debug);
+        do Output.printInt(value);
+        do Output.printString(whitespace);
+        return;
+    }
+
+    function void printString(String value) {
+        do Output.moveCursor(15, 33);
+        do Output.printString(debug);
+        do Output.printString(value);
+        do Output.printString(whitespace);
+        return;
+    }
+}
