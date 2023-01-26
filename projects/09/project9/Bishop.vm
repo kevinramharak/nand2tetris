@@ -1,235 +1,94 @@
-function Pawn.canMoveTo 1
-push argument 5
-push argument 3
-eq
-if-goto IF_TRUE0
-goto IF_FALSE0
-label IF_TRUE0
-push argument 6
-if-goto IF_TRUE1
-goto IF_FALSE1
-label IF_TRUE1
-push argument 4
-push constant 6
-eq
-push argument 2
-and
-push constant 4
-eq
-if-goto IF_TRUE2
-goto IF_FALSE2
-label IF_TRUE2
-push constant 5
-push argument 0
-add
-pop pointer 1
-push that 0
-pop local 0
-push argument 5
-push local 0
-add
-pop pointer 1
-push that 0
-push constant 0
-eq
-not
-if-goto IF_TRUE3
-goto IF_FALSE3
-label IF_TRUE3
+function Bishop.canMoveTo 1
 push constant 0
 return
-label IF_FALSE3
-push argument 1
-push constant 0
-eq
-return
-label IF_FALSE2
-push argument 4
-push constant 1
-sub
-push argument 2
-eq
-if-goto IF_TRUE4
-goto IF_FALSE4
-label IF_TRUE4
-push argument 1
-push constant 0
-eq
-return
-label IF_FALSE4
-goto IF_END1
-label IF_FALSE1
-push argument 4
-push constant 1
-eq
-push argument 2
-and
-push constant 3
-eq
-if-goto IF_TRUE5
-goto IF_FALSE5
-label IF_TRUE5
-push constant 2
-push argument 0
-add
-pop pointer 1
-push that 0
-pop local 0
-push argument 5
-push local 0
-add
-pop pointer 1
-push that 0
-push constant 0
-eq
-not
-if-goto IF_TRUE6
-goto IF_FALSE6
-label IF_TRUE6
-push constant 0
-return
-label IF_FALSE6
-push argument 1
-push constant 0
-eq
-return
-label IF_FALSE5
-push argument 4
-push constant 1
-add
-push argument 2
-eq
-if-goto IF_TRUE7
-goto IF_FALSE7
-label IF_TRUE7
-push argument 1
-push constant 0
-eq
-return
-label IF_FALSE7
-label IF_END1
-goto IF_END0
-label IF_FALSE0
-push argument 5
-push constant 1
-sub
-push argument 3
-eq
-push argument 5
-push constant 1
-add
-push argument 3
-eq
-or
-if-goto IF_TRUE8
-goto IF_FALSE8
-label IF_TRUE8
-push argument 4
-push constant 1
-sub
-push argument 2
-eq
-push argument 4
-push constant 1
-add
-push argument 2
-eq
-or
-if-goto IF_TRUE9
-goto IF_FALSE9
-label IF_TRUE9
-push argument 1
-push constant 0
-eq
-not
-return
-label IF_FALSE9
-label IF_FALSE8
-label IF_END0
-push constant 0
-return
-function Pawn.drawWhiteOnWhite 1
+function Bishop.drawWhiteOnWhite 1
 push constant 16384
 push argument 0
 add
 pop local 0
 push local 0
+push constant 256
+add
+push constant 32767
+not
+call Memory.poke 2
+pop temp 0
+push local 0
 push constant 288
 add
-push constant 8192
-neg
+push constant 16384
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 320
 add
-push constant 4096
+push constant 8192
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 352
 add
-push constant 2048
+push constant 4096
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 384
 add
-push constant 2048
+push constant 4096
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 416
 add
-push constant 2048
+push constant 8192
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 448
 add
-push constant 12288
+push constant 16384
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 480
 add
-push constant 8192
+push constant 16384
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 512
 add
-push constant 8192
+push constant 16384
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 544
 add
-push constant 8192
+push constant 16384
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 576
 add
-push constant 8192
+push constant 16384
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 608
 add
-push constant 12288
+push constant 24576
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 640
 add
-push constant 2048
+push constant 4096
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 672
 add
-push constant 1024
+push constant 2048
 call Memory.poke 2
 pop temp 0
 push local 0
@@ -240,9 +99,15 @@ neg
 call Memory.poke 2
 pop temp 0
 push local 0
+push constant 257
+add
+push constant 1
+call Memory.poke 2
+pop temp 0
+push local 0
 push constant 289
 add
-push constant 3
+push constant 2
 call Memory.poke 2
 pop temp 0
 push local 0
@@ -266,13 +131,13 @@ pop temp 0
 push local 0
 push constant 417
 add
-push constant 8
+push constant 4
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 449
 add
-push constant 6
+push constant 2
 call Memory.poke 2
 pop temp 0
 push local 0
@@ -320,98 +185,111 @@ pop temp 0
 push local 0
 push constant 705
 add
-push constant 31
+push constant 63
 call Memory.poke 2
 pop temp 0
 push constant 0
 return
-function Pawn.drawWhiteOnBlack 1
+function Bishop.drawWhiteOnBlack 1
 push constant 16384
 push argument 0
 add
 pop local 0
 push local 0
+push constant 256
+add
+push constant 32767
+call Memory.poke 2
+pop temp 0
+push local 0
 push constant 288
 add
-push constant 8191
+push constant 16383
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 320
 add
-push constant 4095
+push constant 8191
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 352
 add
-push constant 2047
+push constant 4095
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 384
 add
-push constant 2047
+push constant 4095
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 416
 add
-push constant 2047
+push constant 8191
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 448
 add
-push constant 4095
+push constant 16383
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 480
 add
-push constant 8191
+push constant 16383
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 512
 add
-push constant 8191
+push constant 16383
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 544
 add
-push constant 8191
+push constant 16383
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 576
 add
-push constant 8191
+push constant 16383
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 608
 add
-push constant 4095
+push constant 8191
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 640
 add
-push constant 2047
+push constant 4095
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 672
 add
-push constant 1023
+push constant 2047
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 704
 add
 push constant 1023
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 257
+add
+push constant 2
+neg
 call Memory.poke 2
 pop temp 0
 push local 0
@@ -445,14 +323,14 @@ pop temp 0
 push local 0
 push constant 417
 add
-push constant 16
+push constant 8
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 449
 add
-push constant 8
+push constant 4
 neg
 call Memory.poke 2
 pop temp 0
@@ -508,105 +386,112 @@ pop temp 0
 push local 0
 push constant 705
 add
-push constant 32
+push constant 64
 neg
 call Memory.poke 2
 pop temp 0
 push constant 0
 return
-function Pawn.drawBlackOnWhite 1
+function Bishop.drawBlackOnWhite 1
 push constant 16384
 push argument 0
 add
 pop local 0
 push local 0
+push constant 256
+add
+push constant 32767
+not
+call Memory.poke 2
+pop temp 0
+push local 0
 push constant 288
 add
-push constant 8192
+push constant 16384
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 320
 add
-push constant 4096
+push constant 8192
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 352
 add
-push constant 2048
+push constant 4096
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 384
 add
-push constant 2048
+push constant 4096
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 416
 add
-push constant 2048
+push constant 8192
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 448
 add
-push constant 4096
+push constant 16384
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 480
 add
-push constant 8192
+push constant 16384
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 512
 add
-push constant 8192
+push constant 16384
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 544
 add
-push constant 8192
+push constant 16384
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 576
 add
-push constant 8192
+push constant 16384
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 608
 add
-push constant 4096
+push constant 8192
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 640
 add
-push constant 2048
+push constant 4096
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 672
 add
-push constant 1024
+push constant 2048
 neg
 call Memory.poke 2
 pop temp 0
@@ -615,6 +500,12 @@ push constant 704
 add
 push constant 1024
 neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 257
+add
+push constant 1
 call Memory.poke 2
 pop temp 0
 push local 0
@@ -644,13 +535,13 @@ pop temp 0
 push local 0
 push constant 417
 add
-push constant 15
+push constant 7
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 449
 add
-push constant 7
+push constant 3
 call Memory.poke 2
 pop temp 0
 push local 0
@@ -698,103 +589,110 @@ pop temp 0
 push local 0
 push constant 705
 add
-push constant 31
+push constant 63
 call Memory.poke 2
 pop temp 0
 push constant 0
 return
-function Pawn.drawBlackOnBlack 1
+function Bishop.drawBlackOnBlack 1
 push constant 16384
 push argument 0
 add
 pop local 0
 push local 0
+push constant 256
+add
+push constant 32767
+call Memory.poke 2
+pop temp 0
+push local 0
 push constant 288
 add
-push constant 8191
+push constant 16385
+neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 320
+add
+push constant 8193
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 352
 add
 push constant 4097
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
-push constant 352
-add
-push constant 2049
-neg
-call Memory.poke 2
-pop temp 0
-push local 0
 push constant 384
 add
-push constant 2049
+push constant 4097
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 416
 add
-push constant 2049
+push constant 24577
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 448
 add
-push constant 12289
+push constant 16385
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 480
 add
-push constant 8193
+push constant 16385
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 512
 add
-push constant 8193
+push constant 16385
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 544
 add
-push constant 8193
+push constant 16385
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 576
 add
-push constant 8193
+push constant 16385
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 608
 add
-push constant 12289
+push constant 24577
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 640
 add
-push constant 2049
+push constant 4097
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 672
 add
-push constant 1025
+push constant 2049
 neg
 call Memory.poke 2
 pop temp 0
@@ -805,9 +703,16 @@ push constant 1023
 call Memory.poke 2
 pop temp 0
 push local 0
+push constant 257
+add
+push constant 2
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
 push constant 289
 add
-push constant 4
+push constant 3
 neg
 call Memory.poke 2
 pop temp 0
@@ -835,14 +740,14 @@ pop temp 0
 push local 0
 push constant 417
 add
-push constant 9
+push constant 7
 neg
 call Memory.poke 2
 pop temp 0
 push local 0
 push constant 449
 add
-push constant 7
+push constant 3
 neg
 call Memory.poke 2
 pop temp 0
@@ -898,7 +803,7 @@ pop temp 0
 push local 0
 push constant 705
 add
-push constant 32
+push constant 64
 neg
 call Memory.poke 2
 pop temp 0

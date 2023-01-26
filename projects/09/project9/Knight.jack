@@ -1,0 +1,158 @@
+
+class Knight {
+    function bool canMoveTo(Array pieces, Piece target, int targetRowIndex, int targetColumnIndex, int rowIndex, int columnIndex, bool isWhite) {
+        var Array row;
+        // TODO: if the path is an L shape return true
+        return false;
+    }
+
+    function void drawWhiteOnWhite(int initialOffset) {
+        var int address;
+        // TODO: this addition operation can be optimized
+        let address = 16384 + initialOffset;
+        // column 0
+        do Memory.poke(address + 288, ~32767);
+        do Memory.poke(address + 320, 16384);
+        do Memory.poke(address + 352, 12288);
+        do Memory.poke(address + 384, 4096);
+        do Memory.poke(address + 416, 18432);
+        do Memory.poke(address + 448, 1024);
+        do Memory.poke(address + 480, 9216);
+        do Memory.poke(address + 512, 22528);
+        do Memory.poke(address + 544, ~32767);
+        do Memory.poke(address + 576, ~32767);
+        do Memory.poke(address + 608, 16384);
+        do Memory.poke(address + 640, 8192);
+        do Memory.poke(address + 672, 4096);
+        do Memory.poke(address + 704, 2048);
+        do Memory.poke(address + 736, -1024);
+        // column 1
+        do Memory.poke(address + 289, 7);
+        do Memory.poke(address + 321, 8);
+        do Memory.poke(address + 353, 16);
+        do Memory.poke(address + 385, 16);
+        do Memory.poke(address + 417, 32);
+        do Memory.poke(address + 449, 32);
+        do Memory.poke(address + 481, 32);
+        do Memory.poke(address + 513, 16);
+        do Memory.poke(address + 545, 16);
+        do Memory.poke(address + 577, 8);
+        do Memory.poke(address + 609, 4);
+        do Memory.poke(address + 641, 4);
+        do Memory.poke(address + 673, 24);
+        do Memory.poke(address + 705, 32);
+        do Memory.poke(address + 737, 127);
+        return;
+    }
+
+    function void drawWhiteOnBlack(int initialOffset) {
+        var int address;
+        // TODO: this addition operation can be optimized
+        let address = 16384 + initialOffset;
+        // column 0
+        do Memory.poke(address + 288, 32767);
+        do Memory.poke(address + 320, 16383);
+        do Memory.poke(address + 352, 4095);
+        do Memory.poke(address + 384, 4095);
+        do Memory.poke(address + 416, 18431);
+        do Memory.poke(address + 448, 1023);
+        do Memory.poke(address + 480, 1023);
+        do Memory.poke(address + 512, 10239);
+        do Memory.poke(address + 544, 32767);
+        do Memory.poke(address + 576, 32767);
+        do Memory.poke(address + 608, 16383);
+        do Memory.poke(address + 640, 8191);
+        do Memory.poke(address + 672, 4095);
+        do Memory.poke(address + 704, 2047);
+        // column 1
+        do Memory.poke(address + 289, -8);
+        do Memory.poke(address + 321, -16);
+        do Memory.poke(address + 353, -32);
+        do Memory.poke(address + 385, -32);
+        do Memory.poke(address + 417, -64);
+        do Memory.poke(address + 449, -64);
+        do Memory.poke(address + 481, -64);
+        do Memory.poke(address + 513, -32);
+        do Memory.poke(address + 545, -32);
+        do Memory.poke(address + 577, -16);
+        do Memory.poke(address + 609, -8);
+        do Memory.poke(address + 641, -8);
+        do Memory.poke(address + 673, -32);
+        do Memory.poke(address + 705, -64);
+        return;
+    }
+
+    function void drawBlackOnWhite(int initialOffset) {
+        var int address;
+        // TODO: this addition operation can be optimized
+        let address = 16384 + initialOffset;
+        // column 0
+        do Memory.poke(address + 288, ~32767);
+        do Memory.poke(address + 320, -16384);
+        do Memory.poke(address + 352, -4096);
+        do Memory.poke(address + 384, -4096);
+        do Memory.poke(address + 416, -18432);
+        do Memory.poke(address + 448, -1024);
+        do Memory.poke(address + 480, -1024);
+        do Memory.poke(address + 512, -10240);
+        do Memory.poke(address + 544, ~32767);
+        do Memory.poke(address + 576, ~32767);
+        do Memory.poke(address + 608, -16384);
+        do Memory.poke(address + 640, -8192);
+        do Memory.poke(address + 672, -4096);
+        do Memory.poke(address + 704, -2048);
+        // column 1
+        do Memory.poke(address + 289, 7);
+        do Memory.poke(address + 321, 15);
+        do Memory.poke(address + 353, 31);
+        do Memory.poke(address + 385, 31);
+        do Memory.poke(address + 417, 63);
+        do Memory.poke(address + 449, 63);
+        do Memory.poke(address + 481, 63);
+        do Memory.poke(address + 513, 31);
+        do Memory.poke(address + 545, 31);
+        do Memory.poke(address + 577, 15);
+        do Memory.poke(address + 609, 7);
+        do Memory.poke(address + 641, 7);
+        do Memory.poke(address + 673, 31);
+        do Memory.poke(address + 705, 63);
+        return;
+    }
+
+    function void drawBlackOnBlack(int initialOffset) {
+        var int address;
+        // TODO: this addition operation can be optimized
+        let address = 16384 + initialOffset;
+        // column 0
+        do Memory.poke(address + 288, 32767);
+        do Memory.poke(address + 320, -16385);
+        do Memory.poke(address + 352, -12289);
+        do Memory.poke(address + 384, -4097);
+        do Memory.poke(address + 416, -18433);
+        do Memory.poke(address + 448, -1025);
+        do Memory.poke(address + 480, -9217);
+        do Memory.poke(address + 512, -22529);
+        do Memory.poke(address + 544, 32767);
+        do Memory.poke(address + 576, 32767);
+        do Memory.poke(address + 608, -16385);
+        do Memory.poke(address + 640, -8193);
+        do Memory.poke(address + 672, -4097);
+        do Memory.poke(address + 704, 2047);
+        // column 1
+        do Memory.poke(address + 289, -8);
+        do Memory.poke(address + 321, -9);
+        do Memory.poke(address + 353, -17);
+        do Memory.poke(address + 385, -17);
+        do Memory.poke(address + 417, -33);
+        do Memory.poke(address + 449, -33);
+        do Memory.poke(address + 481, -33);
+        do Memory.poke(address + 513, -17);
+        do Memory.poke(address + 545, -17);
+        do Memory.poke(address + 577, -9);
+        do Memory.poke(address + 609, -5);
+        do Memory.poke(address + 641, -5);
+        do Memory.poke(address + 673, -25);
+        do Memory.poke(address + 705, -64);
+        return;
+    }
+}

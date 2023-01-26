@@ -48,6 +48,7 @@ class Board {
         let i = 0;
         let j = 0;
         // TODO: would unrolling the loop increase performance?
+        // since this is only called on full redraws, probably not
         while (~(i = 8)) {
             let row = pieces[i];
             while (~(j = 8)) {
@@ -68,6 +69,7 @@ class Board {
         let i = 0;
         let j = 0;
         // TODO: would unrolling the loop increase performance?
+        // since this is only called on full redraws, probably not
         while (~(i = 8)) {
             while (~(j = 8)) {
                 do drawSquare(i, j);

@@ -29,7 +29,7 @@ class Game {
 
     constructor Game new() {
         let ui = UI.new();
-        let board = Board.new(500);
+        let board = Board.new(300);
         do initializePieces();
         let turn = 1;
         let selectedRowIndex = -1;
@@ -43,33 +43,59 @@ class Game {
     }
 
     method void initializePieces() {
-        var int i;
+        var int i, type;
+        var bool isWhite;
         var Array row;
         let pieces = Array.new(8);
         let i = 0;
-        // TODO: would unrolling the loop increase performance?
         while (~(i = 8)) {
             let pieces[i] = Array.new(8);
             let i = i + 1;
         }
+
+        // setup black pieces
+        let isWhite = false;
+        let i = 0;
+        let row = pieces[1];
+        // pawns
+        let type = 1;
+        while (~(i = 8)) {
+            let row[i] = Piece.new(1, i, isWhite, type);
+            let i = i + 1;
+        }
+
+        let row = pieces[0];
+        // knights
+        let type = 2;
+        let row[1] = Piece.new(0, 1, isWhite, type);
+        let row[6] = Piece.new(0, 6, isWhite, type);
+
+        // bishops
+        let type = 3;
+        let row[2] = Piece.new(0, 2, isWhite, type);
+        let row[5] = Piece.new(0, 5, isWhite, type);
+
+        // setup white pieces
+        let isWhite = true;
+        let i = 0;
         let row = pieces[6];
-        let row[0] = Piece.new(6, 0, true, 1);
+        // pawns
+        let type = 1;
+        while (~(i = 8)) {
+            let row[i] = Piece.new(6, i, isWhite, type);
+            let i = i + 1;
+        }
+
         let row = pieces[7];
-        let row[1] = Piece.new(7, 1, false, 1);
-        // // setup black pieces
-        // let i = 0;
-        // let row = pieces[1];
-        // while (~(i = 8)) {
-        //     let row[i] = Piece.new(1, i, false, 1);
-        //     let i = i + 1;
-        // }
-        // // setup white pieces
-        // let i = 0;
-        // let row = pieces[6];
-        // while (~(i = 8)) {
-        //     let row[i] = Piece.new(6, i, true, 1);
-        //     let i = i + 1;
-        // }
+        // knights
+        let type = 2;
+        let row[1] = Piece.new(7, 1, isWhite, type);
+        let row[6] = Piece.new(7, 6, isWhite, type);
+
+        // bishops
+        let type = 3;
+        let row[2] = Piece.new(7, 2, isWhite, type);
+        let row[5] = Piece.new(7, 5, isWhite, type);
         return;
     }
 
@@ -115,6 +141,7 @@ class Game {
     }
 
     method void draw() {
+        // TODO: redraw is expensive, we could try and optimize to only redraw squares/pieces that changed
         do board.draw(redraw, hoveredRowIndex, hoveredColumnIndex, selectedRowIndex, selectedColumnIndex, pieces);
         do ui.draw(redraw, turn);
         let redraw = false;
@@ -129,31 +156,33 @@ class Game {
         if (waitingForKeyRelease) {
             if (key = 0) {
                 let waitingForKeyRelease = false;
-            } else {
-                return;
             }
+            return;
         }
         if (~(key = 0)) {
-            let redraw = true;
             let waitingForKeyRelease = true;
             // left arrow
             if (key = 130 & ~(hoveredColumnIndex = 0)) {
                 let hoveredColumnIndex = hoveredColumnIndex - 1;
+                let redraw = true;
                 return;
             }
             // up arrow
             if (key = 131 & ~(hoveredRowIndex = 0)) {
                 let hoveredRowIndex = hoveredRowIndex - 1;
+                let redraw = true;
                 return;
             }
             // right arrow
             if (key = 132 & ~(hoveredColumnIndex = 7)) {
                 let hoveredColumnIndex = hoveredColumnIndex + 1;
+                let redraw = true;
                 return;
             }
             // down arrow
             if (key = 133 & ~(hoveredRowIndex = 7)) {
                 let hoveredRowIndex = hoveredRowIndex + 1;
+                let redraw = true;
                 return;
             }
             // space
@@ -165,12 +194,14 @@ class Game {
                         if (canSelectPiece(piece)) {
                             let selectedRowIndex = hoveredRowIndex;
                             let selectedColumnIndex = hoveredColumnIndex;
+                            let redraw = true;
                         }
                     }
                 } else {
                     if (isHoveredSameAsSelected()) {
                         let selectedRowIndex = -1;
                         let selectedColumnIndex = -1;
+                        let redraw = true;
                     } else {
                         let row = pieces[selectedRowIndex];
                         let piece = row[selectedColumnIndex];
@@ -205,6 +236,7 @@ class Game {
         let selectedRowIndex = -1;
         let selectedColumnIndex = -1;
         let turn = turn + 1;
+        let redraw = true;
         return;
     }
 
@@ -218,7 +250,6 @@ class Game {
                 }
             } else {
                 if (rowIndex = 7) {
-                    // promote
                     do piece.setType(5);
                 }
             }

@@ -1,4 +1,5 @@
 
+/** A generic class that can delegate to the correct (static) piece class based on the type of the piece */
 class Piece {
     field int rowIndex, columnIndex;
     field bool isWhite;
@@ -49,20 +50,54 @@ class Piece {
     }
 
     method void draw(Board board) {
-        var int offset; //, backgroundColor;
+        var int offset, backgroundColor;
         let offset = board.calculateOffset(rowIndex, columnIndex);
-        // flattened for performance = 32 * 8
-        let offset = offset + 256;
-        // let backgroundColor = board.calculateColor(rowIndex, columnIndex);
+        let backgroundColor = board.calculateColor(rowIndex, columnIndex);
+        // TODO: does returns in each branch boost performance?
+        // TODO: make sure draw functions do not bother writing -1 as the tile will already be black
         if (isWhite) {
-            if (type = 1) {
-                do Pawn.drawWhite(offset);
-                return;
+            if (backgroundColor = 0) {
+                if (type = 1) {
+                    do Pawn.drawWhiteOnWhite(offset);
+                }
+                if (type = 2) {
+                    do Knight.drawWhiteOnWhite(offset);
+                }
+                if (type = 3) {
+                    do Bishop.drawWhiteOnWhite(offset);
+                }
+            } else {
+                if (type = 1) {
+                    do Pawn.drawWhiteOnBlack(offset);
+                }
+                if (type = 2) {
+                    do Knight.drawWhiteOnBlack(offset);
+                }
+                if (type = 3) {
+                    do Bishop.drawWhiteOnBlack(offset);
+                }
             }
         } else {
-            if (type = 1) {
-                do Pawn.drawBlack(offset);
-                return;
+            if (backgroundColor = 0) {
+                if (type = 1) {
+                    do Pawn.drawBlackOnWhite(offset);
+                }
+                if (type = 2) {
+                    do Knight.drawBlackOnWhite(offset);
+                }
+                if (type = 3) {
+                    do Bishop.drawBlackOnWhite(offset);
+                }
+            } else {
+                if (type = 1) {
+                    do Pawn.drawBlackOnBlack(offset);
+                }
+                if (type = 2) {
+                    do Knight.drawBlackOnBlack(offset);
+                }
+                if (type = 3) {
+                    do Bishop.drawBlackOnBlack(offset);
+                }
             }
         }
         return;
@@ -70,48 +105,10 @@ class Piece {
 
     method bool canMoveTo(Array pieces, Piece target, int targetRowIndex, int targetColumnIndex) {
         if (type = 1) {
-            return canPawnMoveTo(pieces, target, targetRowIndex, targetColumnIndex);
+            return Pawn.canMoveTo(pieces, target, targetRowIndex, targetColumnIndex, rowIndex, columnIndex, isWhite);
         }
-        return false;
-    }
-
-    method bool canPawnMoveTo(Array pieces, Piece target, int targetRowIndex, int targetColumnIndex) {
-        var Array row;
-        if (columnIndex = targetColumnIndex) {
-            // TODO: make this generic
-            if (isWhite) {
-                // starting position
-                if (rowIndex = 6 & targetRowIndex = 4) {
-                    // no blocking piece
-                    let row = pieces[5];
-                    if (~(row[columnIndex] = null)) {
-                        return false;
-                    }
-                    return target = null;
-                }
-                if ((rowIndex - 1) = targetRowIndex) {
-                    return target = null;
-                }
-            } else {
-                // starting position
-                if (rowIndex = 1 & targetRowIndex = 3) {
-                    // no blocking piece
-                    let row = pieces[2];
-                    if (~(row[columnIndex] = null)) {
-                        return false;
-                    }
-                    return target = null;
-                }
-                if ((rowIndex + 1) = targetRowIndex) {
-                    return target = null;
-                }
-            }
-        } else {
-            if (((columnIndex - 1) = targetColumnIndex) | ((columnIndex + 1) = targetColumnIndex)) {
-                if (((rowIndex - 1) = targetRowIndex) | ((rowIndex + 1) = targetRowIndex)) {
-                    return ~(target = null);
-                }
-            }
+        if (type = 3) {
+            return Bishop.canMoveTo(pieces, target, targetRowIndex, targetColumnIndex, rowIndex, columnIndex, isWhite);
         }
         return false;
     }
