@@ -125,7 +125,13 @@ class Board {
             let color = ~color;
         }
         // flattened for performance = 16384 + offset + 896
-        do drawVerticalLine(17280 + offset, color);
+        do drawHorizontalLine(17280 + offset, color);
+
+        // optionally we can expand the hover/selection with vertical lines
+        // do Screen.setColor(color);
+        // let y1 = (rowIndex * 32) + 4;
+        // let x1 = (columnIndex * 64) + 2;
+        // do Screen.drawLine(x1, y1, x1, y1 + 24);
         return;
     }
 
@@ -137,14 +143,11 @@ class Board {
         let color = ~calculateColor(rowIndex, columnIndex);
         let offset = calculateOffset(rowIndex, columnIndex);
         // flattened for performance = 16384 + offset + 32
-        do drawVerticalLine(16448 + offset, color);
+        do drawHorizontalLine(16448 + offset, color);
         return;
     }
 
-    method void drawVerticalLine(int address, int color) {
-        do Memory.poke(address, color);
-        do Memory.poke(address + 1, color);
-        let address = address + 32;
+    method void drawHorizontalLine(int address, int color) {
         do Memory.poke(address, color);
         do Memory.poke(address + 1, color);
         return;

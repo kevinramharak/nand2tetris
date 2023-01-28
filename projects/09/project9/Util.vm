@@ -12,3 +12,16 @@ and
 push constant 0
 eq
 return
+function Util.abs 0
+push argument 0
+push constant 0
+lt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push argument 0
+neg
+return
+label IF_FALSE0
+push argument 0
+return

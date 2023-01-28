@@ -1,9 +1,50 @@
 
 class Bishop {
     function bool canMoveTo(Array pieces, Piece target, int targetRowIndex, int targetColumnIndex, int rowIndex, int columnIndex, bool isWhite) {
+        var int i, j, iIncrement, jIncrement;
         var Array row;
+        // cannot move vertically / horizontally
+        if (targetRowIndex = rowIndex) {
+            return false;
+        }
+        if (targetColumnIndex = columnIndex) {
+            return false;
+        }
+        // moves should always have the same absolute difference between row and column indexes
+        // if this is not true the move is not diagonally
+        if (~(Util.abs(targetColumnIndex - columnIndex) = Util.abs(targetRowIndex - rowIndex))) {
+            return false;
+        }
         // TODO: if the path to the target is clear return true, else return false
-        return false;
+
+        // setup the loop
+        if (targetRowIndex > rowIndex) {
+            let iIncrement = 1;
+        } else {
+            let iIncrement = -1;
+        }
+        if (targetColumnIndex > columnIndex) {
+            let jIncrement = 1;
+        } else {
+            let jIncrement = -1;
+        }
+        let i = rowIndex + iIncrement;
+        let j = columnIndex + jIncrement;
+
+        while (~(i = targetRowIndex)) {
+            let row = pieces[i];
+            if (~(row[j] = null)) {
+                return false;
+            }
+            let j = j + jIncrement;
+            let i = i + iIncrement;
+        }
+
+        if (target = null) {
+            return true;
+        }
+
+        return ~(target.getIsWhite() = isWhite);
     }
 
     function void drawWhiteOnWhite(int initialOffset) {
