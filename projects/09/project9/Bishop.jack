@@ -15,7 +15,6 @@ class Bishop {
         if (~(Util.abs(targetColumnIndex - columnIndex) = Util.abs(targetRowIndex - rowIndex))) {
             return false;
         }
-        // TODO: if the path to the target is clear return true, else return false
 
         // setup the loop
         if (targetRowIndex > rowIndex) {

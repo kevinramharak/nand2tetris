@@ -1,0 +1,31 @@
+function King.canMoveTo 1
+push constant 0
+return
+function King.drawWhiteOnWhite 1
+push constant 16384
+push argument 0
+add
+pop local 0
+push constant 0
+return
+function King.drawWhiteOnBlack 1
+push constant 16384
+push argument 0
+add
+pop local 0
+push constant 0
+return
+function King.drawBlackOnWhite 1
+push constant 16384
+push argument 0
+add
+pop local 0
+push constant 0
+return
+function King.drawBlackOnBlack 1
+push constant 16384
+push argument 0
+add
+pop local 0
+push constant 0
+return

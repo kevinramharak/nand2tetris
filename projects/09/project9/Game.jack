@@ -129,6 +129,7 @@ class Game {
         var bool exit;
         let exit = false;
         while (~exit) {
+            // TODO: figure out how to detect check and check-mate and what to do when it happens
             do draw();
             do input();
             do Timer.tick();

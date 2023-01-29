@@ -1,0 +1,71 @@
+
+class Rook {
+    function bool canMoveTo(Array pieces, Piece target, int targetRowIndex, int targetColumnIndex, int rowIndex, int columnIndex, bool isWhite) {
+        var int i, iIncrement;
+        var Array row;
+        if (targetRowIndex = rowIndex) {
+            if (targetColumnIndex > columnIndex) {
+                let iIncrement = 1;
+            } else {
+                let iIncrement = -1;
+            }
+            let row = pieces[rowIndex];
+            let i = rowIndex + iIncrement;
+            while (~(i = targetColumnIndex)) {
+                if (~(row[i] = null)) {
+                    return false;
+                }
+                let i = i + iIncrement;
+            }
+        }
+        if (targetColumnIndex = columnIndex) {
+            if (targetRowIndex > rowIndex) {
+                let iIncrement = 1;
+            } else {
+                let iIncrement = -1;
+            }
+            let i = rowIndex + iIncrement;
+            while (~(i = targetRowIndex)) {
+                let row = pieces[i];
+                if(~(row[columnIndex] = null)) {
+                    return false;
+                }
+                let i = i + iIncrement;
+            }
+        }
+
+        if (target = null) {
+            return true;
+        }
+
+        return ~(target.getIsWhite() = isWhite);
+    }
+
+    function void drawWhiteOnWhite(int initialOffset) {
+        var int address;
+        // TODO: this addition operation can be optimized
+        let address = 16384 + initialOffset;
+        return;
+    }
+
+    function void drawWhiteOnBlack(int initialOffset) {
+        var int address;
+        // TODO: this addition operation can be optimized
+        let address = 16384 + initialOffset;
+        return;
+    }
+
+    function void drawBlackOnWhite(int initialOffset) {
+        var int address;
+        // TODO: this addition operation can be optimized
+        let address = 16384 + initialOffset;
+        return;
+    }
+
+    function void drawBlackOnBlack(int initialOffset) {
+        var int address;
+        // TODO: this addition operation can be optimized
+        let address = 16384 + initialOffset;
+        return;
+    }
+}

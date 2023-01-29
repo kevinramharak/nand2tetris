@@ -1,0 +1,31 @@
+function Queen.canMoveTo 1
+push constant 0
+return
+function Queen.drawWhiteOnWhite 1
+push constant 16384
+push argument 0
+add
+pop local 0
+push constant 0
+return
+function Queen.drawWhiteOnBlack 1
+push constant 16384
+push argument 0
+add
+pop local 0
+push constant 0
+return
+function Queen.drawBlackOnWhite 1
+push constant 16384
+push argument 0
+add
+pop local 0
+push constant 0
+return
+function Queen.drawBlackOnBlack 1
+push constant 16384
+push argument 0
+add
+pop local 0
+push constant 0
+return

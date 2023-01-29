@@ -53,8 +53,7 @@ class Piece {
         var int offset, backgroundColor;
         let offset = board.calculateOffset(rowIndex, columnIndex);
         let backgroundColor = board.calculateColor(rowIndex, columnIndex);
-        // TODO: does returns in each branch boost performance?
-        // TODO: make sure draw functions do not bother writing -1 as the tile will already be black
+        // TODO: does a return statement in each branch boost performance?
         if (isWhite) {
             if (backgroundColor = 0) {
                 if (type = 1) {
@@ -66,6 +65,15 @@ class Piece {
                 if (type = 3) {
                     do Bishop.drawWhiteOnWhite(offset);
                 }
+                if (type = 4) {
+                    do Rook.drawWhiteOnWhite(offset);
+                }
+                if (type = 5) {
+                    do Queen.drawWhiteOnWhite(offset);
+                }
+                if (type = 6) {
+                    do King.drawWhiteOnWhite(offset);
+                }
             } else {
                 if (type = 1) {
                     do Pawn.drawWhiteOnBlack(offset);
@@ -75,6 +83,15 @@ class Piece {
                 }
                 if (type = 3) {
                     do Bishop.drawWhiteOnBlack(offset);
+                }
+                if (type = 4) {
+                    do Rook.drawWhiteOnWhite(offset);
+                }
+                if (type = 5) {
+                    do Queen.drawWhiteOnWhite(offset);
+                }
+                if (type = 6) {
+                    do King.drawWhiteOnWhite(offset);
                 }
             }
         } else {
@@ -88,6 +105,15 @@ class Piece {
                 if (type = 3) {
                     do Bishop.drawBlackOnWhite(offset);
                 }
+                if (type = 4) {
+                    do Rook.drawWhiteOnWhite(offset);
+                }
+                if (type = 5) {
+                    do Queen.drawWhiteOnWhite(offset);
+                }
+                if (type = 6) {
+                    do King.drawWhiteOnWhite(offset);
+                }
             } else {
                 if (type = 1) {
                     do Pawn.drawBlackOnBlack(offset);
@@ -98,6 +124,15 @@ class Piece {
                 if (type = 3) {
                     do Bishop.drawBlackOnBlack(offset);
                 }
+                if (type = 4) {
+                    do Rook.drawWhiteOnWhite(offset);
+                }
+                if (type = 5) {
+                    do Queen.drawWhiteOnWhite(offset);
+                }
+                if (type = 6) {
+                    do King.drawWhiteOnWhite(offset);
+                }
             }
         }
         return;
@@ -107,9 +142,22 @@ class Piece {
         if (type = 1) {
             return Pawn.canMoveTo(pieces, target, targetRowIndex, targetColumnIndex, rowIndex, columnIndex, isWhite);
         }
+        if (type = 2) {
+            return Knight.canMoveTo(pieces, target, targetRowIndex, targetColumnIndex, rowIndex, columnIndex, isWhite);
+        }
         if (type = 3) {
             return Bishop.canMoveTo(pieces, target, targetRowIndex, targetColumnIndex, rowIndex, columnIndex, isWhite);
         }
+        if (type = 4) {
+            return Rook.canMoveTo(pieces, target, targetRowIndex, targetColumnIndex, rowIndex, columnIndex, isWhite);
+        }
+        if (type = 5) {
+            return Queen.canMoveTo(pieces, target, targetRowIndex, targetColumnIndex, rowIndex, columnIndex, isWhite);
+        }
+        if (type = 6) {
+            return King.canMoveTo(pieces, target, targetRowIndex, targetColumnIndex, rowIndex, columnIndex, isWhite);
+        }
+        do Sys.error(0);
         return false;
     }
 }
