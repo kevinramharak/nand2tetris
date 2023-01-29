@@ -1,8 +1,26 @@
 
 class Knight {
     function bool canMoveTo(Array pieces, Piece target, int targetRowIndex, int targetColumnIndex, int rowIndex, int columnIndex, bool isWhite) {
+        var int diffRowIndex, diffColumnIndex;
         var Array row;
-        // TODO: if the path is an L shape return true
+        let diffRowIndex = Util.abs(targetRowIndex - rowIndex);
+        let diffColumnIndex = Util.abs(targetColumnIndex - columnIndex);
+        if (diffRowIndex = 2) {
+            if (diffColumnIndex = 1) {
+                if (target = null) {
+                    return true;
+                }
+                return ~(target.getIsWhite() = isWhite);
+            }
+        }
+        if (diffRowIndex = 1) {
+            if (diffColumnIndex = 2) {
+                if (target = null) {
+                    return true;
+                }
+                return ~(target.getIsWhite() = isWhite);
+            }
+        }
         return false;
     }
 
