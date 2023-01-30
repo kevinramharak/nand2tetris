@@ -5,19 +5,33 @@ eq
 if-goto IF_TRUE0
 goto IF_FALSE0
 label IF_TRUE0
+push argument 3
+push argument 5
+gt
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 1
+pop local 1
+goto IF_END1
+label IF_FALSE1
+push constant 1
+neg
+pop local 1
+label IF_END1
 push argument 4
 push argument 0
 add
 pop pointer 1
 push that 0
 pop local 2
-push argument 4
+push argument 5
 push local 1
 add
 pop local 0
 label WHILE_EXP0
 push local 0
-push argument 2
+push argument 3
 eq
 not
 not
@@ -30,32 +44,62 @@ push that 0
 push constant 0
 eq
 not
-if-goto IF_TRUE1
-goto IF_FALSE1
-label IF_TRUE1
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
 push constant 0
 return
-label IF_FALSE1
+label IF_FALSE2
 push local 0
 push local 1
 add
 pop local 0
 goto WHILE_EXP0
 label WHILE_END0
+push argument 1
+push constant 0
+eq
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push constant 0
+not
+return
+label IF_FALSE3
+push argument 1
+call Piece.getIsWhite 1
+push argument 6
+eq
+not
+return
 label IF_FALSE0
 push argument 3
 push argument 5
 eq
-if-goto IF_TRUE2
-goto IF_FALSE2
-label IF_TRUE2
-push argument 5
+if-goto IF_TRUE4
+goto IF_FALSE4
+label IF_TRUE4
+push argument 2
+push argument 4
+gt
+if-goto IF_TRUE5
+goto IF_FALSE5
+label IF_TRUE5
+push constant 1
+pop local 1
+goto IF_END5
+label IF_FALSE5
+push constant 1
+neg
+pop local 1
+label IF_END5
+push argument 4
 push local 1
 add
 pop local 0
 label WHILE_EXP1
 push local 0
-push argument 3
+push argument 2
 eq
 not
 not
@@ -74,40 +118,236 @@ push that 0
 push constant 0
 eq
 not
-if-goto IF_TRUE3
-goto IF_FALSE3
-label IF_TRUE3
+if-goto IF_TRUE6
+goto IF_FALSE6
+label IF_TRUE6
 push constant 0
 return
-label IF_FALSE3
+label IF_FALSE6
 push local 0
 push local 1
 add
 pop local 0
 goto WHILE_EXP1
 label WHILE_END1
-label IF_FALSE2
 push argument 1
 push constant 0
 eq
-if-goto IF_TRUE4
-goto IF_FALSE4
-label IF_TRUE4
+if-goto IF_TRUE7
+goto IF_FALSE7
+label IF_TRUE7
 push constant 0
 not
 return
-label IF_FALSE4
+label IF_FALSE7
 push argument 1
 call Piece.getIsWhite 1
 push argument 6
 eq
 not
 return
+label IF_FALSE4
+push constant 0
+return
 function Rook.drawWhiteOnWhite 1
 push constant 16384
 push argument 0
 add
 pop local 0
+push local 0
+push constant 256
+add
+push constant 10240
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 288
+add
+push constant 29696
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 320
+add
+push constant 1024
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 352
+add
+push constant 1024
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 384
+add
+push constant 6144
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 416
+add
+push constant 4096
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 448
+add
+push constant 2048
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 480
+add
+push constant 4096
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 512
+add
+push constant 4096
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 544
+add
+push constant 4096
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 576
+add
+push constant 4096
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 608
+add
+push constant 4096
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 640
+add
+push constant 4096
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 672
+add
+push constant 4096
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 704
+add
+push constant 2048
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 736
+add
+push constant 1024
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 257
+add
+push constant 27
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 289
+add
+push constant 46
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 321
+add
+push constant 32
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 353
+add
+push constant 32
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 385
+add
+push constant 24
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 417
+add
+push constant 8
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 449
+add
+push constant 16
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 481
+add
+push constant 8
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 513
+add
+push constant 8
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 545
+add
+push constant 8
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 577
+add
+push constant 8
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 609
+add
+push constant 8
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 641
+add
+push constant 8
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 673
+add
+push constant 8
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 705
+add
+push constant 16
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 737
+add
+push constant 63
+call Memory.poke 2
+pop temp 0
 push constant 0
 return
 function Rook.drawWhiteOnBlack 1
@@ -115,6 +355,214 @@ push constant 16384
 push argument 0
 add
 pop local 0
+push local 0
+push constant 256
+add
+push constant 10239
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 288
+add
+push constant 1023
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 320
+add
+push constant 1023
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 352
+add
+push constant 1023
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 384
+add
+push constant 2047
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 416
+add
+push constant 4095
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 448
+add
+push constant 2047
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 480
+add
+push constant 4095
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 512
+add
+push constant 4095
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 544
+add
+push constant 4095
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 576
+add
+push constant 4095
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 608
+add
+push constant 4095
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 640
+add
+push constant 4095
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 672
+add
+push constant 4095
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 704
+add
+push constant 2047
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 736
+add
+push constant 1023
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 257
+add
+push constant 28
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 289
+add
+push constant 64
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 321
+add
+push constant 64
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 353
+add
+push constant 64
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 385
+add
+push constant 32
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 417
+add
+push constant 16
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 449
+add
+push constant 32
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 481
+add
+push constant 16
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 513
+add
+push constant 16
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 545
+add
+push constant 16
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 577
+add
+push constant 16
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 609
+add
+push constant 16
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 641
+add
+push constant 16
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 673
+add
+push constant 16
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 705
+add
+push constant 32
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 737
+add
+push constant 64
+neg
+call Memory.poke 2
+pop temp 0
 push constant 0
 return
 function Rook.drawBlackOnWhite 1
@@ -122,6 +570,214 @@ push constant 16384
 push argument 0
 add
 pop local 0
+push local 0
+push constant 256
+add
+push constant 10240
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 288
+add
+push constant 1024
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 320
+add
+push constant 1024
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 352
+add
+push constant 1024
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 384
+add
+push constant 2048
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 416
+add
+push constant 4096
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 448
+add
+push constant 2048
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 480
+add
+push constant 4096
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 512
+add
+push constant 4096
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 544
+add
+push constant 4096
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 576
+add
+push constant 4096
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 608
+add
+push constant 4096
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 640
+add
+push constant 4096
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 672
+add
+push constant 4096
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 704
+add
+push constant 2048
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 736
+add
+push constant 1024
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 257
+add
+push constant 27
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 289
+add
+push constant 63
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 321
+add
+push constant 63
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 353
+add
+push constant 63
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 385
+add
+push constant 31
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 417
+add
+push constant 15
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 449
+add
+push constant 31
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 481
+add
+push constant 15
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 513
+add
+push constant 15
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 545
+add
+push constant 15
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 577
+add
+push constant 15
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 609
+add
+push constant 15
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 641
+add
+push constant 15
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 673
+add
+push constant 15
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 705
+add
+push constant 31
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 737
+add
+push constant 63
+call Memory.poke 2
+pop temp 0
 push constant 0
 return
 function Rook.drawBlackOnBlack 1
@@ -129,5 +785,227 @@ push constant 16384
 push argument 0
 add
 pop local 0
+push local 0
+push constant 256
+add
+push constant 10239
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 288
+add
+push constant 29697
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 320
+add
+push constant 1025
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 352
+add
+push constant 1025
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 384
+add
+push constant 6145
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 416
+add
+push constant 4097
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 448
+add
+push constant 2049
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 480
+add
+push constant 4097
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 512
+add
+push constant 4097
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 544
+add
+push constant 4097
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 576
+add
+push constant 4097
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 608
+add
+push constant 4097
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 640
+add
+push constant 4097
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 672
+add
+push constant 4097
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 704
+add
+push constant 2049
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 736
+add
+push constant 1023
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 257
+add
+push constant 28
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 289
+add
+push constant 47
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 321
+add
+push constant 33
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 353
+add
+push constant 33
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 385
+add
+push constant 25
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 417
+add
+push constant 9
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 449
+add
+push constant 17
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 481
+add
+push constant 9
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 513
+add
+push constant 9
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 545
+add
+push constant 9
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 577
+add
+push constant 9
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 609
+add
+push constant 9
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 641
+add
+push constant 9
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 673
+add
+push constant 9
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 705
+add
+push constant 17
+neg
+call Memory.poke 2
+pop temp 0
+push local 0
+push constant 737
+add
+push constant 64
+neg
+call Memory.poke 2
+pop temp 0
 push constant 0
 return

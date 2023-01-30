@@ -85,13 +85,13 @@ class Piece {
                     do Bishop.drawWhiteOnBlack(offset);
                 }
                 if (type = 4) {
-                    do Rook.drawWhiteOnWhite(offset);
+                    do Rook.drawWhiteOnBlack(offset);
                 }
                 if (type = 5) {
-                    do Queen.drawWhiteOnWhite(offset);
+                    do Queen.drawWhiteOnBlack(offset);
                 }
                 if (type = 6) {
-                    do King.drawWhiteOnWhite(offset);
+                    do King.drawWhiteOnBlack(offset);
                 }
             }
         } else {
@@ -106,13 +106,13 @@ class Piece {
                     do Bishop.drawBlackOnWhite(offset);
                 }
                 if (type = 4) {
-                    do Rook.drawWhiteOnWhite(offset);
+                    do Rook.drawBlackOnWhite(offset);
                 }
                 if (type = 5) {
-                    do Queen.drawWhiteOnWhite(offset);
+                    do Queen.drawBlackOnWhite(offset);
                 }
                 if (type = 6) {
-                    do King.drawWhiteOnWhite(offset);
+                    do King.drawBlackOnWhite(offset);
                 }
             } else {
                 if (type = 1) {
@@ -125,13 +125,13 @@ class Piece {
                     do Bishop.drawBlackOnBlack(offset);
                 }
                 if (type = 4) {
-                    do Rook.drawWhiteOnWhite(offset);
+                    do Rook.drawBlackOnBlack(offset);
                 }
                 if (type = 5) {
-                    do Queen.drawWhiteOnWhite(offset);
+                    do Queen.drawBlackOnBlack(offset);
                 }
                 if (type = 6) {
-                    do King.drawWhiteOnWhite(offset);
+                    do King.drawBlackOnBlack(offset);
                 }
             }
         }

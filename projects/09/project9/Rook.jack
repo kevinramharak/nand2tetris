@@ -10,13 +10,17 @@ class Rook {
                 let iIncrement = -1;
             }
             let row = pieces[rowIndex];
-            let i = rowIndex + iIncrement;
+            let i = columnIndex + iIncrement;
             while (~(i = targetColumnIndex)) {
                 if (~(row[i] = null)) {
                     return false;
                 }
                 let i = i + iIncrement;
             }
+            if (target = null) {
+                return true;
+            }
+            return ~(target.getIsWhite() = isWhite);
         }
         if (targetColumnIndex = columnIndex) {
             if (targetRowIndex > rowIndex) {
@@ -32,19 +36,52 @@ class Rook {
                 }
                 let i = i + iIncrement;
             }
+            if (target = null) {
+                return true;
+            }
+            return ~(target.getIsWhite() = isWhite);
         }
-
-        if (target = null) {
-            return true;
-        }
-
-        return ~(target.getIsWhite() = isWhite);
+        return false;
     }
 
     function void drawWhiteOnWhite(int initialOffset) {
         var int address;
         // TODO: this addition operation can be optimized
         let address = 16384 + initialOffset;
+        // column 0
+        do Memory.poke(address + 256, -10240);
+        do Memory.poke(address + 288, 29696);
+        do Memory.poke(address + 320, 1024);
+        do Memory.poke(address + 352, 1024);
+        do Memory.poke(address + 384, 6144);
+        do Memory.poke(address + 416, 4096);
+        do Memory.poke(address + 448, 2048);
+        do Memory.poke(address + 480, 4096);
+        do Memory.poke(address + 512, 4096);
+        do Memory.poke(address + 544, 4096);
+        do Memory.poke(address + 576, 4096);
+        do Memory.poke(address + 608, 4096);
+        do Memory.poke(address + 640, 4096);
+        do Memory.poke(address + 672, 4096);
+        do Memory.poke(address + 704, 2048);
+        do Memory.poke(address + 736, -1024);
+        // column 1
+        do Memory.poke(address + 257, 27);
+        do Memory.poke(address + 289, 46);
+        do Memory.poke(address + 321, 32);
+        do Memory.poke(address + 353, 32);
+        do Memory.poke(address + 385, 24);
+        do Memory.poke(address + 417, 8);
+        do Memory.poke(address + 449, 16);
+        do Memory.poke(address + 481, 8);
+        do Memory.poke(address + 513, 8);
+        do Memory.poke(address + 545, 8);
+        do Memory.poke(address + 577, 8);
+        do Memory.poke(address + 609, 8);
+        do Memory.poke(address + 641, 8);
+        do Memory.poke(address + 673, 8);
+        do Memory.poke(address + 705, 16);
+        do Memory.poke(address + 737, 63);
         return;
     }
 
@@ -52,6 +89,40 @@ class Rook {
         var int address;
         // TODO: this addition operation can be optimized
         let address = 16384 + initialOffset;
+        // column 0
+        do Memory.poke(address + 256, 10239);
+        do Memory.poke(address + 288, 1023);
+        do Memory.poke(address + 320, 1023);
+        do Memory.poke(address + 352, 1023);
+        do Memory.poke(address + 384, 2047);
+        do Memory.poke(address + 416, 4095);
+        do Memory.poke(address + 448, 2047);
+        do Memory.poke(address + 480, 4095);
+        do Memory.poke(address + 512, 4095);
+        do Memory.poke(address + 544, 4095);
+        do Memory.poke(address + 576, 4095);
+        do Memory.poke(address + 608, 4095);
+        do Memory.poke(address + 640, 4095);
+        do Memory.poke(address + 672, 4095);
+        do Memory.poke(address + 704, 2047);
+        do Memory.poke(address + 736, 1023);
+        // column 1
+        do Memory.poke(address + 257, -28);
+        do Memory.poke(address + 289, -64);
+        do Memory.poke(address + 321, -64);
+        do Memory.poke(address + 353, -64);
+        do Memory.poke(address + 385, -32);
+        do Memory.poke(address + 417, -16);
+        do Memory.poke(address + 449, -32);
+        do Memory.poke(address + 481, -16);
+        do Memory.poke(address + 513, -16);
+        do Memory.poke(address + 545, -16);
+        do Memory.poke(address + 577, -16);
+        do Memory.poke(address + 609, -16);
+        do Memory.poke(address + 641, -16);
+        do Memory.poke(address + 673, -16);
+        do Memory.poke(address + 705, -32);
+        do Memory.poke(address + 737, -64);
         return;
     }
 
@@ -59,6 +130,40 @@ class Rook {
         var int address;
         // TODO: this addition operation can be optimized
         let address = 16384 + initialOffset;
+        // column 0
+        do Memory.poke(address + 256, -10240);
+        do Memory.poke(address + 288, -1024);
+        do Memory.poke(address + 320, -1024);
+        do Memory.poke(address + 352, -1024);
+        do Memory.poke(address + 384, -2048);
+        do Memory.poke(address + 416, -4096);
+        do Memory.poke(address + 448, -2048);
+        do Memory.poke(address + 480, -4096);
+        do Memory.poke(address + 512, -4096);
+        do Memory.poke(address + 544, -4096);
+        do Memory.poke(address + 576, -4096);
+        do Memory.poke(address + 608, -4096);
+        do Memory.poke(address + 640, -4096);
+        do Memory.poke(address + 672, -4096);
+        do Memory.poke(address + 704, -2048);
+        do Memory.poke(address + 736, -1024);
+        // column 1
+        do Memory.poke(address + 257, 27);
+        do Memory.poke(address + 289, 63);
+        do Memory.poke(address + 321, 63);
+        do Memory.poke(address + 353, 63);
+        do Memory.poke(address + 385, 31);
+        do Memory.poke(address + 417, 15);
+        do Memory.poke(address + 449, 31);
+        do Memory.poke(address + 481, 15);
+        do Memory.poke(address + 513, 15);
+        do Memory.poke(address + 545, 15);
+        do Memory.poke(address + 577, 15);
+        do Memory.poke(address + 609, 15);
+        do Memory.poke(address + 641, 15);
+        do Memory.poke(address + 673, 15);
+        do Memory.poke(address + 705, 31);
+        do Memory.poke(address + 737, 63);
         return;
     }
 
@@ -66,6 +171,40 @@ class Rook {
         var int address;
         // TODO: this addition operation can be optimized
         let address = 16384 + initialOffset;
+        // column 0
+        do Memory.poke(address + 256, 10239);
+        do Memory.poke(address + 288, -29697);
+        do Memory.poke(address + 320, -1025);
+        do Memory.poke(address + 352, -1025);
+        do Memory.poke(address + 384, -6145);
+        do Memory.poke(address + 416, -4097);
+        do Memory.poke(address + 448, -2049);
+        do Memory.poke(address + 480, -4097);
+        do Memory.poke(address + 512, -4097);
+        do Memory.poke(address + 544, -4097);
+        do Memory.poke(address + 576, -4097);
+        do Memory.poke(address + 608, -4097);
+        do Memory.poke(address + 640, -4097);
+        do Memory.poke(address + 672, -4097);
+        do Memory.poke(address + 704, -2049);
+        do Memory.poke(address + 736, 1023);
+        // column 1
+        do Memory.poke(address + 257, -28);
+        do Memory.poke(address + 289, -47);
+        do Memory.poke(address + 321, -33);
+        do Memory.poke(address + 353, -33);
+        do Memory.poke(address + 385, -25);
+        do Memory.poke(address + 417, -9);
+        do Memory.poke(address + 449, -17);
+        do Memory.poke(address + 481, -9);
+        do Memory.poke(address + 513, -9);
+        do Memory.poke(address + 545, -9);
+        do Memory.poke(address + 577, -9);
+        do Memory.poke(address + 609, -9);
+        do Memory.poke(address + 641, -9);
+        do Memory.poke(address + 673, -9);
+        do Memory.poke(address + 705, -17);
+        do Memory.poke(address + 737, -64);
         return;
     }
 }

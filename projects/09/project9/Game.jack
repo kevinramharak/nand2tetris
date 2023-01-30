@@ -75,6 +75,19 @@ class Game {
         let row[2] = Piece.new(0, 2, isWhite, type);
         let row[5] = Piece.new(0, 5, isWhite, type);
 
+        // rooks
+        let type = 4;
+        let row[0] = Piece.new(0, 0, isWhite, type);
+        let row[7] = Piece.new(0, 7, isWhite, type);
+
+        // queen
+        let type = 5;
+        let row[3] = Piece.new(0, 3, isWhite, type);
+
+        // king
+        let type = 6;
+        let row[4] = Piece.new(0, 4, isWhite, type);
+
         // setup white pieces
         let isWhite = true;
         let i = 0;
@@ -96,6 +109,20 @@ class Game {
         let type = 3;
         let row[2] = Piece.new(7, 2, isWhite, type);
         let row[5] = Piece.new(7, 5, isWhite, type);
+
+        // rooks
+        let type = 4;
+        let row[0] = Piece.new(7, 0, isWhite, type);
+        let row[7] = Piece.new(7, 7, isWhite, type);
+
+        // queen
+        let type = 5;
+        let row[3] = Piece.new(7, 3, isWhite, type);
+
+        // king
+        let type = 6;
+        let row[4] = Piece.new(7, 4, isWhite, type);
+
         return;
     }
 
