@@ -141,6 +141,16 @@ label IF_TRUE9
 push argument 1
 push constant 0
 eq
+if-goto IF_TRUE10
+goto IF_FALSE10
+label IF_TRUE10
+push constant 0
+return
+label IF_FALSE10
+push argument 1
+call Piece.getIsWhite 1
+push argument 6
+eq
 not
 return
 label IF_FALSE9
