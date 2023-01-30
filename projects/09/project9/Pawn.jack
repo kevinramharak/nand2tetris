@@ -3,7 +3,6 @@ class Pawn {
     function bool canMoveTo(Array pieces, Piece target, int targetRowIndex, int targetColumnIndex, int rowIndex, int columnIndex, bool isWhite) {
         var Array row;
         if (columnIndex = targetColumnIndex) {
-            // TODO: make this generic
             if (isWhite) {
                 // starting position
                 if (rowIndex = 6 & targetRowIndex = 4) {
@@ -34,7 +33,10 @@ class Pawn {
         } else {
             if (((columnIndex - 1) = targetColumnIndex) | ((columnIndex + 1) = targetColumnIndex)) {
                 if (((rowIndex - 1) = targetRowIndex) | ((rowIndex + 1) = targetRowIndex)) {
-                    return ~(target = null);
+                    if (target = null) {
+                        return false;
+                    }
+                    return ~(target.getIsWhite() = isWhite);
                 }
             }
         }
