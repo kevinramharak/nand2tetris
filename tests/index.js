@@ -3,6 +3,7 @@
 const { createSetupForVm } = require("./helpers/createSetupForVm");
 const { createSetupForAssembler } = require("./helpers/createSetupForAssembler");
 const { createSetupForProject } = require("./helpers/createSetupForProject");
+const { createSetupForLexerAndParser } = require('./helpers/createSetupForLexerAndParser');
 const path = require('path');
 
 const setups = [
@@ -14,6 +15,8 @@ const setups = [
     createSetupForAssembler('06'),
     createSetupForVm('07'),
     createSetupForVm('08', (filePath) => filePath.includes('ProgramFlow') || filePath.endsWith('SimpleFunction.vm') ? filePath : path.dirname(filePath)),
+    // 09 cannot be tested through automation
+    createSetupForLexerAndParser('10'),
 ];
 
 const suiteFilter = process.argv.slice(2);

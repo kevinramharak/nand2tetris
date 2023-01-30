@@ -5,6 +5,8 @@
     "assembler": "node ./assembler/build/index.js",
     "compile:vm": "tsc -p vm/",
     "vm": "node ./vm/build/index.js",
+    "compile:compiler": "tsc -p compiler/",
+    "compiler": "node ./compiler/build/index.js",
     "project9": "cd projects/09/project9/ && rm -f ./*.vm && ..\\..\\..\\tools\\JackCompiler.bat"
   },
   "devDependencies": {

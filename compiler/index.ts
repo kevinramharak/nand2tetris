@@ -1,0 +1,44 @@
+
+import { readFile, writeFile, readdir } from 'fs/promises';
+import process from 'process';
+import path from 'path';
+
+import { lex } from './lexer';
+import { tokensToXml } from './Token';
+
+async function main(...args: string[]): Promise<number> {
+    try {
+        const [filePath] = args;
+        if (!filePath || filePath.length === 0) {
+            throw new Error('missing filepath argument');
+        }
+        const outputLexResultAsXml = args.includes('--lexer-xml');
+        const entries = path.extname(filePath) === '.jack' ? [path.basename(filePath)] : await readdir(filePath);
+        const files = entries
+            .filter(name => path.extname(name) === '.jack')
+            .map(name => {
+                const fullPath = path.extname(filePath) === '.jack' ? filePath : path.join(filePath, name);
+                return {
+                    path: fullPath,
+                    name,
+                    contents: readFile(fullPath, { encoding: 'utf8' }),
+                };
+            });
+        const lexResults = await Promise.all(files.map(file => lex(file)));
+        if (outputLexResultAsXml) {
+            lexResults.forEach((result) => {
+                const xml = tokensToXml(result.tokens);
+                const xmlPath = result.file.path.replace('.jack', 'T.xml');
+                writeFile(xmlPath, xml);
+            });
+        }
+        return 0;
+    } catch (e: any) {
+        console.error(`failed with error message: '${e instanceof Error ? e.message : 'unknown error'}`);
+        return 1;
+    }
+}
+
+(async () => {
+    process.exitCode = await main(...process.argv.slice(2));
+})();
