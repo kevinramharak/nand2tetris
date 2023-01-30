@@ -453,9 +453,6 @@ call Game.input 1
 pop temp 0
 call Timer.tick 0
 pop temp 0
-call Timer.getElapsedTime 0
-call Debug.printInt 1
-pop temp 0
 goto WHILE_EXP0
 label WHILE_END0
 push constant 0
