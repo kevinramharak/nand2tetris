@@ -4,15 +4,18 @@ import process from 'process';
 import path from 'path';
 
 import { lex } from './lexer';
+import { parse } from './parser';
 import { tokensToXml } from './Token';
+import { nodeToXml } from './Node';
 
 async function main(...args: string[]): Promise<number> {
     try {
-        const [filePath] = args;
+        const [filePath] = args.filter(arg => !arg.startsWith('-'));
         if (!filePath || filePath.length === 0) {
             throw new Error('missing filepath argument');
         }
         const outputLexResultAsXml = args.includes('--lexer-xml');
+        const outputParseResultAsXml = args.includes('--parser-xml');
         const entries = path.extname(filePath) === '.jack' ? [path.basename(filePath)] : await readdir(filePath);
         const files = entries
             .filter(name => path.extname(name) === '.jack')
@@ -26,11 +29,21 @@ async function main(...args: string[]): Promise<number> {
             });
         const lexResults = await Promise.all(files.map(file => lex(file)));
         if (outputLexResultAsXml) {
-            lexResults.forEach((result) => {
+            const tasks = lexResults.map(async (result) => {
                 const xml = tokensToXml(result.tokens);
                 const xmlPath = result.file.path.replace('.jack', 'T.xml');
-                writeFile(xmlPath, xml);
+                await writeFile(xmlPath, xml);
             });
+            await Promise.all(tasks);
+        }
+        const parseResults = lexResults.map(result => parse(result));
+        if (outputParseResultAsXml) {
+            const tasks = parseResults.map(async (result) => {
+                const xml = nodeToXml(result.rootNode);
+                const xmlPath = result.file.path.replace('.jack', '.xml');
+                await writeFile(xmlPath, xml);
+            });
+            await Promise.all(tasks);
         }
         return 0;
     } catch (e: any) {
