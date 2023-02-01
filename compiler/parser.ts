@@ -1,6 +1,6 @@
 import { IFile } from './IFile';
 import { LexerResult } from './lexer';
-import { ClassNode, InstanceVariableNode, NodeType, StaticVariableNode, SubroutineNode, SubroutineType } from './Node';
+import { ClassNode, InstanceVariableNode, LocalVariableNode, NodeType, ParameterNode, StatementNode, StaticVariableNode, SubroutineNode, SubroutineType } from './Node';
 import { IdentifierToken, IntegerConstantToken, Keyword, KeywordToken, StringConstantToken, Symbol, SymbolToken, Token, TokenType } from './Token';
 
 export interface ParseResult {
@@ -217,19 +217,78 @@ function parseSubroutine(type: SubroutineType, stream: Stream): SubroutineNode {
     const typeToken = stream.expectType();
     const nameToken = stream.expect(TokenType.Identifier);
     stream.expect(TokenType.Symbol, '(');
-    skip(stream, '(', ')');
+    const parameterList = parseParameterList(stream);
     stream.expect(TokenType.Symbol, ')');
     stream.expect(TokenType.Symbol, '{');
-    skip(stream, '{', '}');
+    const variables = parseLocalVariables(stream);
+    const statements = parseStatements(stream);
     stream.expect(TokenType.Symbol, '}');
     return {
         type: NodeType.Subroutine,
         subroutineType: type,
         returnType: getTypeFromToken(typeToken),
         name: nameToken.identifier,
-        parameterList: [],
-        statements: [],
+        parameters: parameterList,
+        variables,
+        statements,
     };
+}
+
+function parseParameterList(stream: Stream): ParameterNode[] {
+    const parameterList: ParameterNode[] = [];
+    do {
+        let peek = stream.peek();
+        if (peek.type === TokenType.Symbol && peek.symbol === ')') {
+            break;
+        }
+        const typeToken = stream.expectType();
+        const nameToken = stream.expect(TokenType.Identifier);
+        peek = stream.peek();
+        if (peek.type === TokenType.Symbol && peek.symbol === ',') {
+            stream.next();
+        }
+        parameterList.push({
+            type: NodeType.Parameter,
+            parameterType: getTypeFromToken(typeToken),
+            name: nameToken.identifier,
+        });
+    } while (!stream.eof());
+    return parameterList;
+}
+
+function parseLocalVariables(stream: Stream): LocalVariableNode[] {
+    const localVariables: LocalVariableNode[] = [];
+    outer: while (!stream.eof()) {
+        const peek = stream.peek();
+        if (peek.type !== TokenType.Keyword || peek.keyword !== 'var') {
+            break outer;
+        }
+        stream.next();
+        const typeToken = stream.expectType();
+        const names: string[] = [];
+        inner: do {
+            const nameToken = stream.expect(TokenType.Identifier);
+            names.push(nameToken.identifier);
+            const peek = stream.peek();
+            if (peek.type === TokenType.Symbol && peek.symbol === ',') {
+                stream.next();
+                continue inner;
+            }
+            break inner;
+        } while (!stream.eof());
+        stream.expect(TokenType.Symbol, ';');
+        localVariables.push({
+            type: NodeType.LocalVariable,
+            variableType: getTypeFromToken(typeToken),
+            names,
+        });
+    }
+    return localVariables;
+}
+
+function parseStatements(stream: Stream): StatementNode[] {
+    skip(stream, '{', '}');
+    return [];
 }
 
 function skip(stream: Stream, start: '(' | '{', end: ')' | '}') {

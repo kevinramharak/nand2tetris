@@ -5,6 +5,9 @@ export enum NodeType {
     StaticVariable,
     InstanceVariable,
     Subroutine,
+    Parameter,
+    LocalVariable,
+    Statement,
 }
 
 export enum SubroutineType {
@@ -14,7 +17,14 @@ export enum SubroutineType {
     Method,
 }
 
-export type Node = ClassNode | StaticVariableNode | InstanceVariableNode | SubroutineNode;
+export enum StatementType {
+    Return,
+    If,
+}
+
+export type Node =
+    ClassNode | StaticVariableNode | InstanceVariableNode | SubroutineNode |
+    ParameterNode | LocalVariableNode;
 
 export interface ClassNode {
     type: NodeType.Class;
@@ -41,8 +51,29 @@ export interface SubroutineNode {
     subroutineType: SubroutineType;
     returnType: string;
     name: string;
-    parameterList: [];
-    statements: [];
+    parameters: ParameterNode[];
+    variables: LocalVariableNode[],
+    statements: StatementNode[];
+}
+
+export interface ParameterNode {
+    type: NodeType.Parameter;
+    parameterType: string;
+    name: string;
+}
+
+export interface LocalVariableNode {
+    type: NodeType.LocalVariable;
+    variableType: string;
+    names: string[];
+}
+
+export type StatementNode = ReturnStatementNode;
+
+export interface ReturnStatementNode {
+    type: NodeType.Statement;
+    statementType: StatementType.Return;
+    expression?: any;
 }
 
 function isKeywordType(type: string): boolean {
@@ -85,7 +116,7 @@ export function nodeToXml(node: Node, lines: string[] = [], indent: number = 0):
             node.names.forEach((name, index, array) => {
                 addLine(`<identifier> ${name} </identifier>`);
                 if ((index + 1) !== array.length) {
-                    addLine('<symbol> , <symbol>');
+                    addLine('<symbol> , </symbol>');
                 }
             });
             addLine('<symbol> ; </symbol>')
@@ -104,8 +135,13 @@ export function nodeToXml(node: Node, lines: string[] = [], indent: number = 0):
             addLine(`<symbol> ( </symbol>`);
             addLine(`<parameterList>`);
             indent += 2;
-            node.parameterList.forEach(parameter => {
-                // parameter
+            node.parameters.forEach((node, index, array) => {
+                const xmlElementName = isKeywordType(node.parameterType) ? 'keyword' : 'identifier';
+                addLine(`<${xmlElementName}> ${node.parameterType} </${xmlElementName}>`);
+                addLine(`<identifier> ${node.name} </identifier>`);
+                if ((index + 1) !== array.length) {
+                    addLine('<symbol> , </symbol>');
+                }
             });
             indent -= 2;
             addLine(`</parameterList>`);
@@ -113,6 +149,24 @@ export function nodeToXml(node: Node, lines: string[] = [], indent: number = 0):
             addLine('<subroutineBody>');
             indent += 2;
             addLine(`<symbol> { </symbol>`);
+            if (node.variables.length > 0) {
+                node.variables.forEach((node, index, array) => {
+                    addLine('<varDec>');
+                    indent += 2;
+                    addLine(`<keyword> var </keyword>`);
+                    const xmlElementName = isKeywordType(node.variableType) ? 'keyword' : 'identifier';
+                    addLine(`<${xmlElementName}> ${node.variableType} </${xmlElementName}>`);
+                    node.names.forEach((name, index, array) => {
+                        addLine(`<identifier> ${name} </identifier>`);
+                        if ((index + 1) !== array.length) {
+                            addLine('<symbol> , </symbol>');
+                        }
+                    });
+                    addLine(`<symbol> ; </symbol>`);
+                    indent -= 2;
+                    addLine('</varDec>');
+                });
+            }
             addLine(`<symbol> } </symbol>`);
             indent -= 2;
             addLine('</subroutineBody>');
