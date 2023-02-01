@@ -108,7 +108,7 @@ export async function lex(file: IFile): Promise<LexerResult> {
             }
         }
     }
-    const error = (message: string, type: typeof Error = Error) => { throw new type(`${message} in ${file.name} at ${line}:${column}`); };
+    const error = (message: string, type: typeof Error = Error) => { throw new type(`${message} in ${file.name}:${line}:${column}`); };
 
     lexing: while (!eof()) {
         const current = next();

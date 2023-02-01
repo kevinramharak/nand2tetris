@@ -48,6 +48,7 @@ async function main(...args: string[]): Promise<number> {
         return 0;
     } catch (e: any) {
         console.error(`failed with error message: '${e instanceof Error ? e.message : 'unknown error'}`);
+        throw e;
         return 1;
     }
 }

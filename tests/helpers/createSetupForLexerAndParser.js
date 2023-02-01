@@ -45,8 +45,8 @@ function createSetupForLexerAndParser(project) {
                         const [expected, actual] = (await Promise.all([
                             readFile(parseXmlFilePath, { encoding: 'utf8' }),
                             readFile(parseXmlCmpFilePath, { encoding: 'utf8' }),
-                        ])).map(text => text.split('\n').filter(line => line.length > 0).map(line => line.trim()));
-                        let name = path.basename(lexXmlFilePath);
+                        ])).map(text => text.split('\r\n'));
+                        let name = path.basename(parseXmlFilePath);
                         expected.forEach((expectedLine, index) => {
                             const actualLine = actual[index];
                             assert.equal(actualLine, expectedLine, `content != in ${name} at line ${index + 1}`);
