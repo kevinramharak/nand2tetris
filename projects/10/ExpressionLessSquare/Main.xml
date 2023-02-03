@@ -24,6 +24,25 @@
         <identifier> game </identifier>
         <symbol> ; </symbol>
       </varDec>
+      <statements>
+        <letStatement>
+          <keyword> let </keyword>
+          <symbol> = </symbol>
+          <symbol> ; </symbol>
+        </letStatement>
+        <doStatement>
+          <keyword> do </keyword>
+          <symbol> ; </symbol>
+        </doStatement>
+        <doStatement>
+          <keyword> do </keyword>
+          <symbol> ; </symbol>
+        </doStatement>
+        <returnStatement>
+          <keyword> return </keyword>
+          <symbol> ; </symbol>
+        </returnStatement>
+      </statements>
       <symbol> } </symbol>
     </subroutineBody>
   </subroutineDec>
@@ -43,6 +62,20 @@
         <identifier> b </identifier>
         <symbol> ; </symbol>
       </varDec>
+      <statements>
+        <ifStatement>
+          <keyword> if </keyword>
+          <symbol> ( </symbol>
+          <symbol> ) </symbol>
+          <symbol> { </symbol>
+          <symbol> } </symbol>
+          <symbol> ; </symbol>
+        </ifStatement>
+        <returnStatement>
+          <keyword> return </keyword>
+          <symbol> ; </symbol>
+        </returnStatement>
+      </statements>
       <symbol> } </symbol>
     </subroutineBody>
   </subroutineDec>

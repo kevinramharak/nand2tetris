@@ -18,13 +18,16 @@ export enum SubroutineType {
 }
 
 export enum StatementType {
+    Do,
+    Let,
     Return,
     If,
+    While,
 }
 
 export type Node =
     ClassNode | StaticVariableNode | InstanceVariableNode | SubroutineNode |
-    ParameterNode | LocalVariableNode;
+    ParameterNode | LocalVariableNode | StatementNode;
 
 export interface ClassNode {
     type: NodeType.Class;
@@ -68,12 +71,34 @@ export interface LocalVariableNode {
     names: string[];
 }
 
-export type StatementNode = ReturnStatementNode;
+export type StatementNode =
+    | DoStatementNode | LetStatementNode
+    | ReturnStatementNode | IfStatementNode
+    | WhileStatementNode;
+
+export interface DoStatementNode {
+    type: NodeType.Statement;
+    statementType: StatementType.Do;
+}
+
+export interface LetStatementNode {
+    type: NodeType.Statement;
+    statementType: StatementType.Let;
+}
 
 export interface ReturnStatementNode {
     type: NodeType.Statement;
     statementType: StatementType.Return;
-    expression?: any;
+}
+
+export interface IfStatementNode {
+    type: NodeType.Statement;
+    statementType: StatementType.If;
+}
+
+export interface WhileStatementNode {
+    type: NodeType.Statement;
+    statementType: StatementType.While;
 }
 
 function isKeywordType(type: string): boolean {
@@ -150,7 +175,7 @@ export function nodeToXml(node: Node, lines: string[] = [], indent: number = 0):
             indent += 2;
             addLine(`<symbol> { </symbol>`);
             if (node.variables.length > 0) {
-                node.variables.forEach((node, index, array) => {
+                node.variables.forEach((node) => {
                     addLine('<varDec>');
                     indent += 2;
                     addLine(`<keyword> var </keyword>`);
@@ -167,11 +192,78 @@ export function nodeToXml(node: Node, lines: string[] = [], indent: number = 0):
                     addLine('</varDec>');
                 });
             }
+            if (node.statements.length > 0) {
+                addLine(`<statements>`);
+                indent += 2;
+                node.statements.forEach((node) => {
+                    nodeToXml(node, lines, indent);
+                });
+                indent -= 2;
+                addLine(`</statements>`);
+            }
             addLine(`<symbol> } </symbol>`);
             indent -= 2;
             addLine('</subroutineBody>');
             indent -= 2;
             addLine('</subroutineDec>');
+            break;
+        }
+        case NodeType.Statement: {
+            switch (node.statementType) {
+                case StatementType.Do: {
+                    addLine(`<doStatement>`);
+                    addLine(`<keyword> do </keyword>`, 2);
+                    // expression
+                    addLine(`<symbol> ; </symbol>`, 2);
+                    addLine(`</doStatement>`);
+                    break;
+                }
+                case StatementType.If: {
+                    addLine(`<ifStatement>`);
+                    addLine(`<keyword> if </keyword>`, 2);
+                    addLine(`<symbol> ( </symbol>`, 2);
+                    // expression?
+                    addLine(`<symbol> ) </symbol>`, 2);
+                    addLine(`<symbol> { </symbol>`, 2);
+                    // statements
+                    addLine(`<symbol> } </symbol>`, 2);
+                    addLine(`<symbol> ; </symbol>`, 2);
+                    // else?
+                    // statements
+                    addLine(`</ifStatement>`);
+                    break;
+                }
+                case StatementType.Let: {
+                    addLine(`<letStatement>`);
+                    addLine(`<keyword> let </keyword>`, 2);
+                    // identifier
+                    addLine(`<symbol> = </symbol>`, 2);
+                    addLine(`<symbol> ; </symbol>`, 2);
+                    addLine(`</letStatement>`);
+                    break;
+                }
+                case StatementType.Return: {
+                    addLine(`<returnStatement>`);
+                    addLine(`<keyword> return </keyword>`, 2);
+                    // expression?
+                    addLine(`<symbol> ; </symbol>`, 2);
+                    addLine(`</returnStatement>`);
+                    break;
+                }
+                case StatementType.While: {
+                    addLine(`<whileStatement>`);
+                    addLine(`<keyword> while </keyword>`, 2);
+                    addLine(`<symbol> ( </symbol>`, 2);
+                    // expression
+                    addLine(`<symbol> ) </symbol>`, 2);
+                    addLine(`<symbol> { </symbol>`, 2);
+                    // statements
+                    addLine(`<symbol> } </symbol>`, 2);
+                    addLine(`<symbol> ; </symbol>`, 2);
+                    addLine(`</whileStatement>`);
+                    break;
+                }
+            }
             break;
         }
     }

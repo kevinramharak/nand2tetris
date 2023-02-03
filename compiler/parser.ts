@@ -1,6 +1,6 @@
 import { IFile } from './IFile';
 import { LexerResult } from './lexer';
-import { ClassNode, InstanceVariableNode, LocalVariableNode, NodeType, ParameterNode, StatementNode, StaticVariableNode, SubroutineNode, SubroutineType } from './Node';
+import { ClassNode, DoStatementNode, IfStatementNode, InstanceVariableNode, LetStatementNode, LocalVariableNode, NodeType, ParameterNode, ReturnStatementNode, StatementNode, StatementType, StaticVariableNode, SubroutineNode, SubroutineType, WhileStatementNode } from './Node';
 import { IdentifierToken, IntegerConstantToken, Keyword, KeywordToken, StringConstantToken, Symbol, SymbolToken, Token, TokenType } from './Token';
 
 export interface ParseResult {
@@ -58,13 +58,13 @@ function createTokenStream(tokens: Token[]) {
             switch (token.type) {
                 case TokenType.Keyword: {
                     if (token.keyword !== value) {
-                        throw new Error(`expected '${value}', instead got '${token.keyword}'  n ${token.fileName}:${token.line}:${token.column}`)
+                        throw new Error(`expected '${value}', instead got '${token.keyword}' in ${token.fileName}:${token.line}:${token.column}`)
                     }
                     break;
                 }
                 case TokenType.Symbol: {
                     if (token.symbol !== value) {
-                        throw new Error(`expected '${value}', instead got '${token.symbol}'  n ${token.fileName}:${token.line}:${token.column}`)
+                        throw new Error(`expected '${value}', instead got '${token.symbol}' in ${token.fileName}:${token.line}:${token.column}`)
                     }
                     break;
                 }
@@ -102,6 +102,7 @@ function parseClass(stream: Stream): ClassNode {
     const className = stream.expect(TokenType.Identifier);
     stream.expect(TokenType.Symbol, '{');
 
+    // TODO: static and instance can be intermixed
     const staticVariables = parseStaticVariables(stream);
     const instanceVariables = parseInstanceVariables(stream);
     const subroutines = parseSubroutines(stream);
@@ -287,8 +288,139 @@ function parseLocalVariables(stream: Stream): LocalVariableNode[] {
 }
 
 function parseStatements(stream: Stream): StatementNode[] {
+    const statements: StatementNode[] = [];
+    do {
+        const peek = stream.peek();
+        // do {expression} ; // NOTE: technically this could be any expression, but only method calls can have side-effects
+        // let {identifier} = {expression} ;
+        // return [{expression}] ;
+        // if ({expression}) { {statement}* } [else { {statement}* }]
+        // while ({expression}) {}
+        if (peek.type === TokenType.Keyword) {
+            switch (peek.keyword) {
+                case 'do': {
+                    const statement = parseDoStatement(stream);
+                    statements.push(statement);
+                    break;
+                }
+                case 'let': {
+                    const statement = parseLetStatement(stream);
+                    statements.push(statement);
+                    break;
+                }
+                case 'return': {
+                    const statement = parseReturnStatement(stream);
+                    statements.push(statement);
+                    break;
+                }
+                case 'if': {
+                    const statement = parseIfStatement(stream);
+                    statements.push(statement);
+                    break;
+                }
+                case 'while': {
+                    const statement = parseWhileStatement(stream);
+                    statements.push(statement);
+                    break;
+                }
+            }
+        } else if (peek.type === TokenType.Symbol && peek.symbol === '}') {
+            break;
+        } else {
+            throw new Error(`unexpected ${TokenType[peek.type]} in ${peek.fileName}:${peek.line}:${peek.column}`);
+        }
+    } while (!stream.eof());
+    return statements;
+}
+
+function parseDoStatement(stream: Stream): DoStatementNode {
+    const node: DoStatementNode = {
+        type: NodeType.Statement,
+        statementType: StatementType.Do,
+    };
+
+    stream.expect(TokenType.Keyword, 'do');
+    const expression = parseExpression(stream);
+    stream.expect(TokenType.Symbol, ';');
+    return node;
+}
+
+function parseLetStatement(stream: Stream): LetStatementNode {
+    const node: LetStatementNode = {
+        type: NodeType.Statement,
+        statementType: StatementType.Let,
+    };
+
+    stream.expect(TokenType.Keyword, 'let');
+    const identifierToken = stream.expect(TokenType.Identifier);
+    stream.expect(TokenType.Symbol, '=');
+    const expression = parseExpression(stream);
+
+    stream.expect(TokenType.Symbol, ';');
+    return node;
+}
+
+function parseReturnStatement(stream: Stream): ReturnStatementNode {
+    const node: ReturnStatementNode = {
+        type: NodeType.Statement,
+        statementType: StatementType.Return,
+    };
+    stream.expect(TokenType.Keyword, 'return');
+    const expression = parseExpression(stream);
+    stream.expect(TokenType.Symbol, ';');
+    return node;
+}
+
+function parseIfStatement(stream: Stream): IfStatementNode {
+    const node: IfStatementNode = {
+        type: NodeType.Statement,
+        statementType: StatementType.If,
+    };
+
+    stream.next();
+    stream.expect(TokenType.Symbol, '(');
+    skip(stream, '(', ')');
+    stream.expect(TokenType.Symbol, ')');
+    stream.expect(TokenType.Symbol, '{');
     skip(stream, '{', '}');
-    return [];
+    stream.expect(TokenType.Symbol, '}');
+
+    const peek = stream.peek();
+    if (peek.type === TokenType.Keyword && peek.keyword === 'else') {
+        stream.next();
+        stream.expect(TokenType.Symbol, '{');
+        skip(stream, '{', '}');
+        stream.expect(TokenType.Symbol, '}');
+    }
+
+    return node;
+}
+
+function parseWhileStatement(stream: Stream): WhileStatementNode {
+    const node: WhileStatementNode = {
+        type: NodeType.Statement,
+        statementType: StatementType.While,
+    };
+
+    stream.next();
+    stream.expect(TokenType.Symbol, '(');
+    skip(stream, '(', ')');
+    stream.expect(TokenType.Symbol, ')');
+    stream.expect(TokenType.Symbol, '{');
+    skip(stream, '{', '}');
+    stream.expect(TokenType.Symbol, '}');
+
+    return node;
+}
+
+function parseExpression(stream: Stream): void {
+    while (!stream.eof()) {
+        const peek = stream.peek();
+        if (peek.type === TokenType.Symbol && peek.symbol === ';') {
+            break;
+        }
+        stream.next();
+    }
 }
 
 function skip(stream: Stream, start: '(' | '{', end: ')' | '}') {
