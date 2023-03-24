@@ -27,15 +27,35 @@
       <statements>
         <letStatement>
           <keyword> let </keyword>
+          <identifier> game </identifier>
           <symbol> = </symbol>
+          <expression>
+            <term>
+              <identifier> game </identifier>
+            </term>
+          </expression>
           <symbol> ; </symbol>
         </letStatement>
         <doStatement>
           <keyword> do </keyword>
+          <identifier> game </identifier>
+          <symbol> . </symbol>
+          <identifier> run </identifier>
+          <symbol> ( </symbol>
+          <expressionList>
+          </expressionList>
+          <symbol> ) </symbol>
           <symbol> ; </symbol>
         </doStatement>
         <doStatement>
           <keyword> do </keyword>
+          <identifier> game </identifier>
+          <symbol> . </symbol>
+          <identifier> dispose </identifier>
+          <symbol> ( </symbol>
+          <expressionList>
+          </expressionList>
+          <symbol> ) </symbol>
           <symbol> ; </symbol>
         </doStatement>
         <returnStatement>
@@ -66,10 +86,21 @@
         <ifStatement>
           <keyword> if </keyword>
           <symbol> ( </symbol>
+          <expression>
+            <term>
+              <identifier> b </identifier>
+            </term>
+          </expression>
           <symbol> ) </symbol>
           <symbol> { </symbol>
+          <statements>
+          </statements>
           <symbol> } </symbol>
-          <symbol> ; </symbol>
+          <keyword> else </keyword>
+          <symbol> { </symbol>
+          <statements>
+          </statements>
+          <symbol> } </symbol>
         </ifStatement>
         <returnStatement>
           <keyword> return </keyword>

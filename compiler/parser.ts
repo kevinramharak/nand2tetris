@@ -1,7 +1,19 @@
 import { IFile } from './IFile';
 import { LexerResult } from './lexer';
-import { ClassNode, DoStatementNode, IfStatementNode, InstanceVariableNode, LetStatementNode, LocalVariableNode, NodeType, ParameterNode, ReturnStatementNode, StatementNode, StatementType, StaticVariableNode, SubroutineNode, SubroutineType, WhileStatementNode } from './Node';
-import { IdentifierToken, IntegerConstantToken, Keyword, KeywordToken, StringConstantToken, Symbol, SymbolToken, Token, TokenType } from './Token';
+import {
+    CallExpressionNode, ClassNode, DoStatementNode,
+    ExpressionNode, ExpressionOperator, ExpressionType,
+    IdentifierNode, IfStatementNode, InstanceVariableNode,
+    LetStatementNode, LocalVariableNode, NodeType,
+    ParameterNode, ReturnStatementNode, StatementNode,
+    StatementType, StaticVariableNode, SubroutineNode,
+    SubroutineType, TermNode, WhileStatementNode
+} from './Node';
+import {
+    IdentifierToken, IntegerConstantToken, Keyword,
+    KeywordToken, StringConstantToken, Symbol,
+    SymbolToken, Token, TokenType
+} from './Token';
 
 export interface ParseResult {
     file: IFile;
@@ -72,6 +84,9 @@ function createTokenStream(tokens: Token[]) {
         }
         return token as unknown as TokenResult<T>;
     };
+    const error = (token: Token, message: string): never => {
+        throw new Error(`${message} in ${token.fileName}:${token.line}:${token.column}`)
+    };
 
     return {
         eof,
@@ -80,6 +95,7 @@ function createTokenStream(tokens: Token[]) {
         expectOneOf,
         expectType,
         expect,
+        error,
     };
 }
 
@@ -192,7 +208,7 @@ function parseSubroutines(stream: Stream): SubroutineNode[] {
                     break;
                 }
                 default: {
-                    throw new Error(`unexpected keyword ${peek.keyword} in ${peek.fileName}:${peek.line}:${peek.column}`);
+                    stream.error(peek, `unexpected keyword ${peek.keyword}`);
                 }
             }
             const subroutine =  parseSubroutine(type!, stream);
@@ -291,11 +307,6 @@ function parseStatements(stream: Stream): StatementNode[] {
     const statements: StatementNode[] = [];
     do {
         const peek = stream.peek();
-        // do {expression} ; // NOTE: technically this could be any expression, but only method calls can have side-effects
-        // let {identifier} = {expression} ;
-        // return [{expression}] ;
-        // if ({expression}) { {statement}* } [else { {statement}* }]
-        // while ({expression}) {}
         if (peek.type === TokenType.Keyword) {
             switch (peek.keyword) {
                 case 'do': {
@@ -327,112 +338,313 @@ function parseStatements(stream: Stream): StatementNode[] {
         } else if (peek.type === TokenType.Symbol && peek.symbol === '}') {
             break;
         } else {
-            throw new Error(`unexpected ${TokenType[peek.type]} in ${peek.fileName}:${peek.line}:${peek.column}`);
+            stream.error(peek, `unexpected ${TokenType[peek.type]}`);
         }
     } while (!stream.eof());
     return statements;
 }
 
 function parseDoStatement(stream: Stream): DoStatementNode {
-    const node: DoStatementNode = {
+    stream.expect(TokenType.Keyword, 'do');
+    const expression = parseCallExpression(stream);
+    stream.expect(TokenType.Symbol, ';');
+    return {
         type: NodeType.Statement,
         statementType: StatementType.Do,
+        expression,
     };
-
-    stream.expect(TokenType.Keyword, 'do');
-    const expression = parseExpression(stream);
-    stream.expect(TokenType.Symbol, ';');
-    return node;
 }
 
 function parseLetStatement(stream: Stream): LetStatementNode {
-    const node: LetStatementNode = {
-        type: NodeType.Statement,
-        statementType: StatementType.Let,
-    };
-
     stream.expect(TokenType.Keyword, 'let');
-    const identifierToken = stream.expect(TokenType.Identifier);
+    const identifier = parseIdentifier(stream);
+    let indexExpression;
+    const peek = stream.peek();
+    if (peek.type === TokenType.Symbol && peek.symbol === '[') {
+        stream.next();
+        indexExpression = parseExpression(stream);
+        stream.expect(TokenType.Symbol, ']');
+    }
     stream.expect(TokenType.Symbol, '=');
     const expression = parseExpression(stream);
-
     stream.expect(TokenType.Symbol, ';');
-    return node;
+    return {
+        type: NodeType.Statement,
+        statementType: StatementType.Let,
+        identifier,
+        indexExpression,
+        expression,
+    };
 }
 
 function parseReturnStatement(stream: Stream): ReturnStatementNode {
-    const node: ReturnStatementNode = {
+    stream.expect(TokenType.Keyword, 'return');
+    const peek = stream.peek();
+    const expectExpression = peek.type !== TokenType.Symbol || peek.symbol !== ';';
+    const expression = expectExpression ? parseExpression(stream) : void 0;
+    stream.expect(TokenType.Symbol, ';');
+    return {
         type: NodeType.Statement,
         statementType: StatementType.Return,
+        expression,
     };
-    stream.expect(TokenType.Keyword, 'return');
-    const expression = parseExpression(stream);
-    stream.expect(TokenType.Symbol, ';');
-    return node;
 }
 
 function parseIfStatement(stream: Stream): IfStatementNode {
-    const node: IfStatementNode = {
-        type: NodeType.Statement,
-        statementType: StatementType.If,
-    };
-
-    stream.next();
+    stream.expect(TokenType.Keyword, 'if');
     stream.expect(TokenType.Symbol, '(');
-    skip(stream, '(', ')');
+    const condition = parseExpression(stream);
     stream.expect(TokenType.Symbol, ')');
     stream.expect(TokenType.Symbol, '{');
-    skip(stream, '{', '}');
+    const statements = parseStatements(stream);
     stream.expect(TokenType.Symbol, '}');
-
+    let elseStatements;
     const peek = stream.peek();
     if (peek.type === TokenType.Keyword && peek.keyword === 'else') {
-        stream.next();
+        stream.expect(TokenType.Keyword, 'else');
         stream.expect(TokenType.Symbol, '{');
-        skip(stream, '{', '}');
+        elseStatements = parseStatements(stream);
         stream.expect(TokenType.Symbol, '}');
     }
-
-    return node;
+    return {
+        type: NodeType.Statement,
+        statementType: StatementType.If,
+        condition,
+        statements,
+        elseStatements,
+    };
 }
 
 function parseWhileStatement(stream: Stream): WhileStatementNode {
-    const node: WhileStatementNode = {
-        type: NodeType.Statement,
-        statementType: StatementType.While,
-    };
-
-    stream.next();
+    stream.expect(TokenType.Keyword, 'while');
     stream.expect(TokenType.Symbol, '(');
-    skip(stream, '(', ')');
+    const condition = parseExpression(stream);
     stream.expect(TokenType.Symbol, ')');
     stream.expect(TokenType.Symbol, '{');
-    skip(stream, '{', '}');
+    const statements = parseStatements(stream);
     stream.expect(TokenType.Symbol, '}');
-
-    return node;
+    return {
+        type: NodeType.Statement,
+        statementType: StatementType.While,
+        condition,
+        statements,
+    };
 }
 
-function parseExpression(stream: Stream): void {
-    while (!stream.eof()) {
+function parseExpression(stream: Stream): ExpressionNode {
+    let expression: ExpressionNode = {
+        type: NodeType.Expression,
+        expressionType: ExpressionType.Expression,
+        lhs: parseTerm(stream),
+        parts: [],
+    };
+    recursive: while (!stream.eof()) {
         const peek = stream.peek();
-        if (peek.type === TokenType.Symbol && peek.symbol === ';') {
-            break;
+        if (peek.type === TokenType.Symbol) {
+            switch (peek.symbol) {
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                case '&':
+                case '|':
+                case '<':
+                case '>':
+                case '=': {
+                    const operator = parseOperator(stream) as Exclude<ExpressionOperator, ExpressionOperator.Negation>;
+                    expression.parts.push({
+                        operator,
+                        rhs: parseTerm(stream),
+                    });
+                    break;
+                }
+                default: {
+                    break recursive;
+                }
+            }
         }
-        stream.next();
-    }
+    };
+    return expression;
 }
 
-function skip(stream: Stream, start: '(' | '{', end: ')' | '}') {
+function parseOperator(streamOrToken: Stream | (Token & SymbolToken)): ExpressionOperator {
+    const token = 'type' in streamOrToken ? streamOrToken : streamOrToken.expect(TokenType.Symbol);
+    switch (token.symbol) {
+        case '+': return ExpressionOperator.Plus;
+        case '-': return ExpressionOperator.Minus;
+        case '*': return ExpressionOperator.Multiply;
+        case '/': return ExpressionOperator.Divide;
+        case '&': return ExpressionOperator.And;
+        case '|': return ExpressionOperator.Or;
+        case '<': return ExpressionOperator.LowerThan;
+        case '>': return ExpressionOperator.GreaterThan;
+        case '=': return ExpressionOperator.Equals;
+        case '~': return ExpressionOperator.Negation;
+    }
+    const stream = 'error' in streamOrToken ? streamOrToken : createTokenStream([]);
+    stream.error(token as Token, `expected expression operator, instead got ${token.symbol}`);
+    throw new Error('unreachable');
+}
+
+function parseIdentifier(stream: Stream): IdentifierNode {
+    const parts: string[] = [];
+    const first = stream.expect(TokenType.Identifier);
+    parts.push(first.identifier);
     while (!stream.eof()) {
         const peek = stream.peek();
-        if (peek.type === TokenType.Symbol && peek.symbol === end) {
+        if (peek.type !== TokenType.Symbol || peek.symbol !== '.') {
             break;
         }
-        if (peek.type === TokenType.Symbol && peek.symbol === start) {
-            stream.next();
-            skip(stream, start, end);
-        }
-        stream.next();
+        stream.expect(TokenType.Symbol, '.');
+        const part = stream.expect(TokenType.Identifier);
+        parts.push(part.identifier);
     }
+    return {
+        type: NodeType.Expression,
+        expressionType: ExpressionType.Identifier,
+        parts,
+    };
+}
+
+function parseCallExpression(stream: Stream): CallExpressionNode {
+    const identifier = parseIdentifier(stream);
+    stream.expect(TokenType.Symbol, '(');
+    const args = parseExpressionList(stream);
+    stream.expect(TokenType.Symbol, ')');
+    return {
+        type: NodeType.Expression,
+        expressionType: ExpressionType.Call,
+        identifier,
+        args,
+    };
+}
+
+function parseExpressionList(stream: Stream): ExpressionNode[] {
+    const peek = stream.peek();
+    if (peek.type === TokenType.Symbol && peek.symbol === ')') {
+        return [];
+    }
+    const expressions: ExpressionNode[] = [];
+    do {
+        expressions.push(parseExpression(stream));
+        const peek = stream.peek();
+        if (peek.type === TokenType.Symbol && peek.symbol === ')') {
+            break;
+        }
+        stream.expect(TokenType.Symbol, ',');
+    } while (!stream.eof());
+    return expressions;
+}
+
+function parseTerm(stream: Stream): TermNode {
+    const token = stream.next();
+    switch (token.type) {
+        case TokenType.Keyword: {
+            switch (token.keyword) {
+                case 'true':
+                case 'false':
+                case 'null':
+                case 'this':
+                    return {
+                        type: NodeType.Expression,
+                        expressionType: ExpressionType.KeywordConstant,
+                        keyword: token.keyword,
+                    };
+            }
+            stream.error(token, `expected term keyword, instead got: ${token.keyword}`);
+            break;
+        }
+        case TokenType.Symbol: {
+            switch (token.symbol) {
+                case '-':
+                case '~': {
+                    const operator = parseOperator(token);
+                    return {
+                        type: NodeType.Expression,
+                        expressionType: ExpressionType.UnaryOpTerm,
+                        operator: (operator as ExpressionOperator.Minus | ExpressionOperator.Negation),
+                        term: parseTerm(stream),
+                    };
+                }
+                case '(': {
+                    const expression = parseExpression(stream);
+                    stream.expect(TokenType.Symbol, ')');
+                    return {
+                        type: NodeType.Expression,
+                        expressionType: ExpressionType.Grouped,
+                        expression,
+                    };
+                }
+            }
+            stream.error(token, `expected term keyword, instead got: ${token.symbol}`);
+            break;
+        }
+        case TokenType.IntegerConstant: {
+            return {
+                type: NodeType.Expression,
+                expressionType: ExpressionType.IntegerConstant,
+                value: token.value,
+            };
+        }
+        case TokenType.StringConstant: {
+            return {
+                type: NodeType.Expression,
+                expressionType: ExpressionType.StringConstant,
+                value: token.value,
+            };
+        }
+        case TokenType.Identifier: {
+            const peek = stream.peek();
+            const identifier: IdentifierNode = {
+                type: NodeType.Expression,
+                expressionType: ExpressionType.Identifier,
+                parts: [token.identifier],
+            };
+            if (peek.type !== TokenType.Symbol) {
+                return identifier;
+            }
+            switch (peek.symbol) {
+                case '[': {
+                    stream.next();
+                    const index = parseExpression(stream);
+                    stream.expect(TokenType.Symbol, ']');
+                    return {
+                        type: NodeType.Expression,
+                        expressionType: ExpressionType.Indexed,
+                        identifier,
+                        index,
+                    };
+                }
+                case '(': {
+                    stream.next();
+                    const args = parseExpressionList(stream);
+                    stream.expect(TokenType.Symbol, ')');
+                    return {
+                        type: NodeType.Expression,
+                        expressionType: ExpressionType.Call,
+                        args,
+                        identifier,
+                    };
+                }
+                case '.': {
+                    stream.next();
+                    const method = stream.expect(TokenType.Identifier);
+                    identifier.parts.push(method.identifier);
+                    stream.expect(TokenType.Symbol, '(');
+                    const args = parseExpressionList(stream);
+                    stream.expect(TokenType.Symbol, ')');
+                    return {
+                        type: NodeType.Expression,
+                        expressionType: ExpressionType.Call,
+                        args,
+                        identifier,
+                    };
+                }
+                default: {
+                    return identifier;
+                }
+            }
+        }
+    }
+    throw new Error('unreachable');
 }
