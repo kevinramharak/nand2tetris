@@ -1,0 +1,4 @@
+function Main.main 0
+function Main.convert 1
+function Main.nextMask 1
+function Main.fillMemory 3

@@ -7,6 +7,7 @@ import { lex } from './lexer';
 import { parse } from './parser';
 import { tokensToXml } from './Token';
 import { nodeToXml } from './Node';
+import { codeGeneration } from './codeGeneration';
 
 async function main(...args: string[]): Promise<number> {
     try {
@@ -45,6 +46,12 @@ async function main(...args: string[]): Promise<number> {
             });
             await Promise.all(tasks);
         }
+        const codeGenerationResults = parseResults.map(result => codeGeneration(result));
+        const tasks = codeGenerationResults.map(async (result) => {
+            const filePath = result.file.path.replace('.jack', '.vm');
+            await writeFile(filePath,  result.code);
+        });
+        await Promise.all(tasks);
         return 0;
     } catch (e: any) {
         console.error(`failed with error message: '${e instanceof Error ? e.message : 'unknown error'}`);

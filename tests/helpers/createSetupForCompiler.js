@@ -6,7 +6,7 @@ const { readFile, readdir } = require('fs/promises');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-function createSetupForLexerAndParser(project) {
+function createSetupForCompiler(project, flags = []) {
     const $ = suite(`projects/${project}`);
     return async () => {
         // 1. get the directories
@@ -19,18 +19,16 @@ function createSetupForLexerAndParser(project) {
                 // 3. get a list of .jack files
                 const fileNames = await readdir(dirName);
                 // 4. invoke the lexer with the correct flags on the directory
-                const result = spawnSync('node', ['./compiler/build/index.js', dirName, '--lexer-xml', '--parser-xml'], { encoding: 'utf8' });
+                const result = spawnSync('node', ['./compiler/build/index.js', dirName, ...flags], { encoding: 'utf8' });
                 assert.equal(undefined, result.error, 'compiler returned an error code');
                 assert.equal('', result.stderr, 'compiler returned output to stderr');
                 assert.equal(0, result.status, 'compiler returned non-zero exit code');
                 // 5. compare the output files with the given .cmp.xml files
                 const cases = fileNames.filter(fileName => fileName.endsWith('.jack')).map(async fileName => {
                     const filePath = path.join(dirName, fileName);
-                    const lexXmlFilePath = filePath.replace('.jack', 'T.xml');
-                    const lexXmlCmpFilePath = filePath.replace('.jack', 'T.cmp.xml');
-                    const parseXmlFilePath = filePath.replace('.jack', '.xml');
-                    const parseXmlCmpFilePath = filePath.replace('.jack', '.cmp.xml');
-                    {
+                    if (flags.includes('--lexer-xml')) {
+                        const lexXmlFilePath = filePath.replace('.jack', 'T.xml');
+                        const lexXmlCmpFilePath = filePath.replace('.jack', 'T.cmp.xml');
                         const [expected, actual] = (await Promise.all([
                             readFile(lexXmlCmpFilePath, { encoding: 'utf8' }),
                             readFile(lexXmlFilePath, { encoding: 'utf8' }),
@@ -41,10 +39,26 @@ function createSetupForLexerAndParser(project) {
                             assert.equal(actualLine, expectedLine, `content != in ${name} at line ${index + 1}`);
                         });
                     }
-                    {
+                    if (flags.includes('--parser-xml')) {
+                        const parseXmlFilePath = filePath.replace('.jack', '.xml');
+                        const parseXmlCmpFilePath = filePath.replace('.jack', '.cmp.xml');
                         const [expected, actual] = (await Promise.all([
-                            readFile(parseXmlFilePath, { encoding: 'utf8' }),
                             readFile(parseXmlCmpFilePath, { encoding: 'utf8' }),
+                            readFile(parseXmlFilePath, { encoding: 'utf8' }),
+                        ])).map(text => text.split('\r\n'));
+                        let name = path.basename(parseXmlFilePath);
+                        expected.forEach((expectedLine, index) => {
+                            const actualLine = actual[index];
+                            assert.equal(actualLine, expectedLine, `content != in ${name} at line ${index + 1}`);
+                        });
+                    }
+                    // dont compare .vm files if any flags are passed
+                    if (flags.length === 0) {
+                        const vmFilePath = filePath.replace('.jack', '.vm');
+                        const vmCmpFilePath = filePath.replace('.jack', '.cmp.vm');
+                        const [expected, actual] = (await Promise.all([
+                            readFile(vmCmpFilePath, { encoding: 'utf8' }),
+                            readFile(vmFilePath, { encoding: 'utf8' }),
                         ])).map(text => text.split('\r\n'));
                         let name = path.basename(parseXmlFilePath);
                         expected.forEach((expectedLine, index) => {
@@ -62,4 +76,4 @@ function createSetupForLexerAndParser(project) {
     };
 }
 
-exports.createSetupForLexerAndParser = createSetupForLexerAndParser;
+exports.createSetupForCompiler = createSetupForCompiler;
