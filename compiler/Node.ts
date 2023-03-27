@@ -89,7 +89,7 @@ export interface LocalVariableNode {
 export type StatementNode =
     | DoStatementNode | LetStatementNode
     | ReturnStatementNode | IfStatementNode
-    | WhileStatementNode | ExpressionNode;
+    | WhileStatementNode;
 
 export interface DoStatementNode {
     type: NodeType.Statement;
@@ -134,7 +134,7 @@ export interface ExpressionNode {
 }
 
 export interface ExpressionPartNode {
-    operator: Exclude<ExpressionOperator, ExpressionOperator.Negation>;
+    operator: Exclude<ExpressionOperator, ExpressionOperator.Not>;
     rhs: TermNode;
 }
 
@@ -148,7 +148,7 @@ export enum ExpressionOperator {
     LowerThan,
     GreaterThan,
     Equals,
-    Negation,
+    Not,
 }
 
 export type TermNode =
@@ -200,7 +200,7 @@ export interface IntegerConstantNode {
 export interface UnaryOpTermNode {
     type: NodeType.Expression;
     expressionType: ExpressionType.UnaryOpTerm;
-    operator: ExpressionOperator.Minus | ExpressionOperator.Negation;
+    operator: ExpressionOperator.Minus | ExpressionOperator.Not;
     term: TermNode;
 }
 
@@ -537,7 +537,7 @@ function mapOperatorToString(operator: ExpressionOperator) {
         case ExpressionOperator.LowerThan: return '<';
         case ExpressionOperator.GreaterThan: return '>';
         case ExpressionOperator.Equals: return '=';
-        case ExpressionOperator.Negation: return '~';
+        case ExpressionOperator.Not: return '~';
     }
 }
 

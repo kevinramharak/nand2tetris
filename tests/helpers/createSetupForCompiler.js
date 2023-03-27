@@ -53,14 +53,14 @@ function createSetupForCompiler(project, flags = []) {
                         });
                     }
                     // dont compare .vm files if any flags are passed
-                    if (flags.length === 0) {
+                    if (!flags.includes('--no-code-gen')) {
                         const vmFilePath = filePath.replace('.jack', '.vm');
                         const vmCmpFilePath = filePath.replace('.jack', '.cmp.vm');
                         const [expected, actual] = (await Promise.all([
                             readFile(vmCmpFilePath, { encoding: 'utf8' }),
                             readFile(vmFilePath, { encoding: 'utf8' }),
                         ])).map(text => text.split('\r\n'));
-                        let name = path.basename(parseXmlFilePath);
+                        let name = path.basename(vmFilePath);
                         expected.forEach((expectedLine, index) => {
                             const actualLine = actual[index];
                             assert.equal(actualLine, expectedLine, `content != in ${name} at line ${index + 1}`);

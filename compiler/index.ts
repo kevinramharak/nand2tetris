@@ -10,6 +10,7 @@ import { nodeToXml } from './Node';
 import { codeGeneration } from './codeGeneration';
 
 async function main(...args: string[]): Promise<number> {
+    const doThrowOnError = args.includes('--throw-on-error');
     try {
         const [filePath] = args.filter(arg => !arg.startsWith('-'));
         if (!filePath || filePath.length === 0) {
@@ -17,6 +18,7 @@ async function main(...args: string[]): Promise<number> {
         }
         const outputLexResultAsXml = args.includes('--lexer-xml');
         const outputParseResultAsXml = args.includes('--parser-xml');
+        const outputCodeGenResult = !args.includes('--no-code-gen');
         const entries = path.extname(filePath) === '.jack' ? [path.basename(filePath)] : await readdir(filePath);
         const files = entries
             .filter(name => path.extname(name) === '.jack')
@@ -46,16 +48,20 @@ async function main(...args: string[]): Promise<number> {
             });
             await Promise.all(tasks);
         }
-        const codeGenerationResults = parseResults.map(result => codeGeneration(result));
-        const tasks = codeGenerationResults.map(async (result) => {
-            const filePath = result.file.path.replace('.jack', '.vm');
-            await writeFile(filePath,  result.code);
-        });
-        await Promise.all(tasks);
+        if (outputCodeGenResult) {
+            const codeGenerationResults = parseResults.map(result => codeGeneration(result));
+            const tasks = codeGenerationResults.map(async (result) => {
+                const filePath = result.file.path.replace('.jack', '.vm');
+                await writeFile(filePath,  result.code);
+            });
+            await Promise.all(tasks);
+        }
         return 0;
     } catch (e: any) {
         console.error(`failed with error message: '${e instanceof Error ? e.message : 'unknown error'}`);
-        throw e;
+        if (doThrowOnError) {
+            throw e;
+        }
         return 1;
     }
 }

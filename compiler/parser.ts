@@ -451,7 +451,7 @@ function parseExpression(stream: Stream): ExpressionNode {
                 case '<':
                 case '>':
                 case '=': {
-                    const operator = parseOperator(stream) as Exclude<ExpressionOperator, ExpressionOperator.Negation>;
+                    const operator = parseOperator(stream) as Exclude<ExpressionOperator, ExpressionOperator.Not>;
                     expression.parts.push({
                         operator,
                         rhs: parseTerm(stream),
@@ -479,7 +479,7 @@ function parseOperator(streamOrToken: Stream | (Token & SymbolToken)): Expressio
         case '<': return ExpressionOperator.LowerThan;
         case '>': return ExpressionOperator.GreaterThan;
         case '=': return ExpressionOperator.Equals;
-        case '~': return ExpressionOperator.Negation;
+        case '~': return ExpressionOperator.Not;
     }
     const stream = 'error' in streamOrToken ? streamOrToken : createTokenStream([]);
     stream.error(token as Token, `expected expression operator, instead got ${token.symbol}`);
@@ -562,7 +562,7 @@ function parseTerm(stream: Stream): TermNode {
                     return {
                         type: NodeType.Expression,
                         expressionType: ExpressionType.UnaryOpTerm,
-                        operator: (operator as ExpressionOperator.Minus | ExpressionOperator.Negation),
+                        operator: (operator as ExpressionOperator.Minus | ExpressionOperator.Not),
                         term: parseTerm(stream),
                     };
                 }

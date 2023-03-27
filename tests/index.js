@@ -16,8 +16,8 @@ const setups = [
     createSetupForVm('07'),
     createSetupForVm('08', (filePath) => filePath.includes('ProgramFlow') || filePath.endsWith('SimpleFunction.vm') ? filePath : path.dirname(filePath)),
     // 09 cannot be tested through automation
-    createSetupForCompiler('10', ['--lexer-xml', '--parser-xml']),
-    createSetupForCompiler('11'),
+    createSetupForCompiler('10', ['--lexer-xml', '--parser-xml', '--no-code-gen', '--do-throw-on-error']),
+    createSetupForCompiler('11', ['--do-throw-on-error']),
 ];
 
 const suiteFilter = process.argv.slice(2);
