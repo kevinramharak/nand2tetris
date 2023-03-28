@@ -4,6 +4,7 @@ const { createSetupForVm } = require("./helpers/createSetupForVm");
 const { createSetupForAssembler } = require("./helpers/createSetupForAssembler");
 const { createSetupForProject } = require("./helpers/createSetupForProject");
 const { createSetupForCompiler } = require('./helpers/createSetupForCompiler');
+const { createSetupForOs } = require('./helpers/createSetupForOs');
 const path = require('path');
 
 const setups = [
@@ -18,6 +19,8 @@ const setups = [
     // 09 cannot be tested through automation
     createSetupForCompiler('10', ['--lexer-xml', '--parser-xml', '--no-code-gen', '--do-throw-on-error']),
     createSetupForCompiler('11', ['--do-throw-on-error']),
+    // 12 can only be partly tested through automation
+    createSetupForOs('12'),
 ];
 
 const suiteFilter = process.argv.slice(2);

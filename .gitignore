@@ -1,5 +1,7 @@
 
 node_modules/
 tools/
+projects/12/**/*.vm
+projects/12/**/*.out
 
 **/*.zip
