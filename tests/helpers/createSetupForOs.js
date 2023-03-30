@@ -48,6 +48,15 @@ function createSetupForOs(project) {
                 ])).map(text => text.split('\n').filter(line => line.length > 0).map(line => line.trim()));
                 expected.forEach((expectedLine, index) => {
                     const actualLine = actual[index];
+                    // only works for single wildcard entries
+                    if (expectedLine.length === actualLine.length ) {
+                        const indexOfWildCard = expectedLine.indexOf('*');
+                        if (indexOfWildCard !== -1) {
+                            const lastIndexOfWildCard = expectedLine.lastIndexOf('*');
+                            const replacement = actualLine.substring(indexOfWildCard, lastIndexOfWildCard + 1);
+                            expectedLine = expectedLine.substring(0, indexOfWildCard) + replacement + expectedLine.substring(lastIndexOfWildCard + 1);
+                        }
+                    }
                     assert.equal(actualLine.length, expectedLine.length, `length != in ${entry} at line ${index + 1}`);
                     assert.equal(actualLine, expectedLine, `content != in ${entry} at line ${index + 1}`);
                 });
