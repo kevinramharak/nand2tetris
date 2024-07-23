@@ -19,7 +19,7 @@ function createSetupForCompiler(project, flags = []) {
                 // 3. get a list of .jack files
                 const fileNames = await readdir(dirName);
                 // 4. invoke the lexer with the correct flags on the directory
-                const result = spawnSync('node', ['./compiler/build/index.js', dirName, ...flags], { encoding: 'utf8' });
+                const result = spawnSync('node', ['./compiler/build/index.js', dirName, ...flags], { encoding: 'utf8', shell: true });
                 assert.equal(undefined, result.error, 'compiler returned an error code');
                 assert.equal('', result.stderr, 'compiler returned output to stderr');
                 assert.equal(0, result.status, 'compiler returned non-zero exit code');

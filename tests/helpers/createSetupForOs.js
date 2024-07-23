@@ -24,7 +24,7 @@ function createSetupForOs(project) {
             const dirName = path.join(projectDir, ...entry.split('/'));
             $(entry, async () => {
                 // 3. run jack compiler for directory
-                const result = spawnSync('.\\tools\\JackCompiler.bat', [dirName], { encoding: 'utf8' });
+                const result = spawnSync('.\\tools\\JackCompiler.bat', [dirName], { encoding: 'utf8', shell: true });
                 assert.equal(undefined, result.error, 'compiler returned an error code');
                 assert.equal('', result.stderr, 'compiler returned output to stderr');
                 assert.equal(0, result.status, 'compiler returned non-zero exit code');

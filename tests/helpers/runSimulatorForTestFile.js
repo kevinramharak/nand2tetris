@@ -9,7 +9,7 @@ const { spawnSync } = require('child_process');
  * @returns {{ error?: Error, stderr: string, stdout: string }}
  */
 function runSimulatorForTestFile(testFilePath, simulator) {
-    const result = spawnSync(`.\\tools\\${simulator}.bat`, [testFilePath], { encoding: 'utf8' });
+    const result = spawnSync(`.\\tools\\${simulator}.bat`, [testFilePath], { encoding: 'utf8', shell: true });
     return {
         error: result.error,
         stderr: result.stderr,
