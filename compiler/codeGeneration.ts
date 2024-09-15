@@ -247,7 +247,8 @@ function visitCallExpression(expression: CallExpressionNode, lines: string[], cl
     // if is method of variable
     const entry = methodTable.lookup(expression.identifier.parts[0]) || classTable.lookup(expression.identifier.parts[0]);
     if (entry) {
-        lines.push(`push ${entry.location} ${entry.position}`);
+        const position = (entry.location === 'argument' && isMethod) ? entry.position + 1 : entry.position;
+        lines.push(`push ${entry.location} ${position}`);
         expression.args.forEach(arg => {
             visitExpression(arg, lines, classTable, methodTable);
         });
@@ -269,7 +270,7 @@ function visitTerm(term: TermNode, lines: string[], classTable: SymbolTable, met
             if (!entry) {
                 throw new Error(`invalid identifier: ` + fullyQualifiedName);
             }
-            const position = entry.location === 'argument' && isMethod ? entry.position + 1 : entry.position;
+            const position = (entry.location === 'argument' && isMethod) ? entry.position + 1 : entry.position;
             lines.push(`push ${entry.location} ${position}`);
             break;
         }
@@ -326,7 +327,8 @@ function visitTerm(term: TermNode, lines: string[], classTable: SymbolTable, met
             if (!entry) {
                 throw new Error(`invalid identifier: ` + fullyQualifiedName);
             }
-            lines.push(`push ${entry.location} ${entry.position}`);
+            const position = (entry.location === 'argument' && isMethod) ? entry.position + 1 : entry.position;
+            lines.push(`push ${entry.location} ${position}`);
             lines.push('add');
             lines.push(`pop pointer 1`);
             lines.push(`push that 0`);

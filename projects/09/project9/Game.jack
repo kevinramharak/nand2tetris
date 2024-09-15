@@ -163,7 +163,7 @@ class Game {
             // this call is to see the elapsed time
             // the goal is to have it about equal to actual speed of time
             // if its really slow there are performance issues
-            do Debug.printInt(Timer.getElapsedTime());
+            // do Debug.printInt(Timer.getElapsedTime());
         }
         return;
     }
