@@ -7,7 +7,11 @@
     "vm": "node ./vm/build/index.js",
     "compile:compiler": "tsc -p compiler/",
     "compiler": "node ./compiler/build/index.js",
-    "project9": "cd projects/09/project9/ && rm -f ./*.vm && ..\\..\\..\\tools\\JackCompiler.bat"
+    "project9:reference": "cd projects/09/project9/ && rm -f ./*.vm && ..\\..\\..\\tools\\JackCompiler.bat",
+    "compile:all": "npm run compile:assembler && npm run compile:vm && npm run compile:compiler",
+    "project9": "npm run compiler -- projects/09/project9 --optimize && npm run vm -- projects/09/project9 && npm run assembler -- projects/09/project9/project9.asm",
+    "dev": "npm run compile:all && npm run project9",
+    "dev:scratch": "npm run compile:compiler && npm run compiler -- scratchpad/Main.jack --lexer-xml --parser-xml --optimize"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.2",

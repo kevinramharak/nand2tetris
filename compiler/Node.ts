@@ -1,5 +1,3 @@
-import { Keyword } from './Token';
-
 export enum NodeType {
     Invalid,
     Class,
@@ -210,8 +208,10 @@ export interface GroupedExpressionNode {
     expression: ExpressionNode;
 }
 
+const keywords = ['boolean', 'char', 'int', 'void'];
+
 function isKeywordType(type: string): boolean {
-    return ['boolean', 'char', 'int', 'void'].includes(type);
+    return keywords.includes(type);
 }
 
 export function nodeToXml(node: Node, lines: string[] = [], indent: number = 0,

@@ -8,6 +8,7 @@ import { parse } from './parser';
 import { tokensToXml } from './Token';
 import { nodeToXml } from './Node';
 import { codeGeneration } from './codeGeneration';
+import { optimize } from './optimize';
 
 async function main(...args: string[]): Promise<number> {
     const doThrowOnError = args.includes('--throw-on-error');
@@ -19,6 +20,7 @@ async function main(...args: string[]): Promise<number> {
         const outputLexResultAsXml = args.includes('--lexer-xml');
         const outputParseResultAsXml = args.includes('--parser-xml');
         const outputCodeGenResult = !args.includes('--no-code-gen');
+        const doOptimize = args.includes('--optimize');
         const entries = path.extname(filePath) === '.jack' ? [path.basename(filePath)] : await readdir(filePath);
         const files = entries
             .filter(name => path.extname(name) === '.jack')
@@ -39,7 +41,10 @@ async function main(...args: string[]): Promise<number> {
             });
             await Promise.all(tasks);
         }
-        const parseResults = lexResults.map(result => parse(result));
+        const parseResults = lexResults.map(result => {
+            const parseResult = parse(result);
+            return doOptimize ? optimize(parseResult) : parseResult;
+        });
         if (outputParseResultAsXml) {
             const tasks = parseResults.map(async (result) => {
                 const xml = nodeToXml(result.rootNode);
