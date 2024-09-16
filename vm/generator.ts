@@ -1,10 +1,5 @@
+import { Access, FlowType, FunctionInstructionType, InstructionType, Operation, Segment } from './Instruction';
 import { Program } from './Program';
-import { InstructionType } from './InstructionType';
-import { Operation } from './Operation';
-import { Segment } from './Segment';
-import { Access } from './Access';
-import { FlowType } from './ProgramFlowInstruction';
-import { FunctionInstructionType } from './FunctionInstruction';
 
 type ComparisonOperation = Operation.Equals | Operation.GreaterThan | Operation.LesserThan;
 
@@ -413,6 +408,7 @@ function format(lines: string[]): string[] {
  * This optimizes some duplicate / symetric commands
  * This really should be part of the assembler
  * Optimizing should happen on the program.instructions level
+ * // TODO: Move this to the assembler
  */
 function optimize(lines: string[]): string[] {
     const optimized: string[] = [];

@@ -1,11 +1,6 @@
-import { Access } from './Access';
-import { FunctionInstructionType } from './FunctionInstruction';
-import { InstructionType } from './InstructionType';
+import { Access, FunctionInstructionType, InstructionType, Operation, FlowType, Segment } from './Instruction';
 import { Keyword } from './Keyword';
-import { Operation } from './Operation';
 import { Program } from './Program';
-import { FlowType } from './ProgramFlowInstruction';
-import { Segment } from './Segment';
 import { Token } from './Token';
 import { TokenType } from './TokenType';
 
