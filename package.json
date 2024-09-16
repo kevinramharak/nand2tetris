@@ -11,7 +11,7 @@
     "compile:all": "npm run compile:assembler && npm run compile:vm && npm run compile:compiler",
     "project9": "npm run compiler -- projects/09/project9 --optimize && npm run vm -- projects/09/project9 && npm run assembler -- projects/09/project9/project9.asm",
     "dev": "npm run compile:all && npm run project9",
-    "dev:scratch": "npm run compile:compiler && npm run compiler -- scratchpad/Main.jack --lexer-xml --parser-xml --optimize"
+    "dev:scratch": "npm run compile:compiler && npm run compiler -- scratchpad/Main.jack --lexer-xml --parser-xml --optimize && npm run compile:vm && npm run vm -- scratchpad/Main.vm && npm run compile:assembler && npm run assembler -- scratchpad/Main.asm"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.2",
