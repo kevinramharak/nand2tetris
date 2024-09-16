@@ -92,6 +92,8 @@ function visitCallExpressionNode(node: CallExpressionNode): CallExpressionNode {
 }
 
 function visitExpressionNode(node: ExpressionNode): ExpressionNode {
+    let lhs = visitTermNode(node.lhs);
+    let parts = node.parts.map(node => visitExpressionPartNode(node));
     if (
         node.lhs.expressionType === ExpressionType.IntegerConstant
         && node.parts.length > 0
@@ -101,20 +103,17 @@ function visitExpressionNode(node: ExpressionNode): ExpressionNode {
             const rhsValue = (part.rhs as IntegerConstantNode).value;
             return evaluateBinaryOp(part.operator, lhsValue, rhsValue);
         }, node.lhs.value);
-        return {
-            ...node,
-            lhs: {
-                type: NodeType.Expression,
-                expressionType: ExpressionType.IntegerConstant,
-                value: lhsValue,
-            },
-            parts: [],
+        lhs = {
+            type: NodeType.Expression,
+            expressionType: ExpressionType.IntegerConstant,
+            value: lhsValue,
         };
+        parts = [];
     }
     return {
         ...node,
-        lhs: visitTermNode(node.lhs),
-        parts: node.parts.map(node => visitExpressionPartNode(node)),
+        lhs,
+        parts,
     };
 }
 
